@@ -24,10 +24,10 @@ export const Accordion: React.FC<AccordionProps> = ({
         key={item.id ?? index}
         name={name}
         open={item.defaultOpen}
-        className="q-accordion"
+        className="collapse collapse-arrow bg-base-200"
       >
-        <summary>{item.title}</summary>
-        <div className="q-accordion-body">{item.children}</div>
+        <summary className="collapse-title font-semibold">{item.title}</summary>
+        <div className="collapse-content">{item.children}</div>
       </details>
     ))}
   </div>
@@ -45,8 +45,8 @@ export const Collapse: React.FC<CollapseProps> = ({
   className = '',
   ...restProps
 }) => (
-  <details className={`q-collapse ${className}`.trim()} {...restProps}>
-    <summary>{title}</summary>
-    <div className="q-collapse-body">{children}</div>
+  <details className={`collapse collapse-arrow ${className}`.trim()} {...restProps}>
+    <summary className="collapse-title font-semibold">{title}</summary>
+    <div className="collapse-content">{children}</div>
   </details>
 );

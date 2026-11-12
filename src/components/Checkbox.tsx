@@ -34,11 +34,12 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
     return (
       <label
-        className={`q-check ${disabled ? 'q-disabled' : ''} ${className}`.trim()}
+        className={`flex items-center gap-2 ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`.trim()}
       >
         <input
           ref={inputRef}
           type="checkbox"
+          className="checkbox"
           checked={checked}
           defaultChecked={defaultChecked}
           disabled={disabled}
@@ -83,11 +84,12 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 
     return (
       <label
-        className={`q-radio ${disabled ? 'q-disabled' : ''} ${className}`.trim()}
+        className={`flex items-center gap-2 ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`.trim()}
       >
         <input
           ref={inputRef}
           type="radio"
+          className="radio"
           value={value}
           name={name}
           checked={checked}

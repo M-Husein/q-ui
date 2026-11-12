@@ -54,7 +54,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const effectiveMaxRows = autosize ? maxRows : undefined;
 
     const classes = [
-      'q-textarea',
+      'textarea',
       autosize ? 'q-autosize' : '',
       resize != null ? `q-resize-${resize === false ? 'none' : resize}` : '',
       className,

@@ -39,7 +39,7 @@ export const Tabs: React.FC<TabsProps> = ({ items, openTab, className = '' }) =>
 
   return (
     <div className={className}>
-      <div role="tablist" className="q-tabs" aria-label="Tabs">
+      <div role="tablist" className="tabs tabs-bordered" aria-label="Tabs">
         {items.map((tab, index) => {
           const isActive = tab.id === activeId;
           return (
@@ -53,7 +53,7 @@ export const Tabs: React.FC<TabsProps> = ({ items, openTab, className = '' }) =>
               tabIndex={isActive ? 0 : -1}
               onClick={() => setActiveId(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className="q-tab"
+              className={`tab ${isActive ? 'tab-active' : ''}`}
             >
               {tab.label}
             </button>
@@ -70,7 +70,7 @@ export const Tabs: React.FC<TabsProps> = ({ items, openTab, className = '' }) =>
             aria-labelledby={`${baseId}-tab-${tab.id}`}
             hidden={!isActive}
             tabIndex={0}
-            className="q-tab-panel"
+            className="tab-content"
           >
             {tab.content}
           </div>

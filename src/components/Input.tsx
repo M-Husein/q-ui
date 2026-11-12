@@ -7,6 +7,6 @@ export interface InputProps
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className = '', ...restProps }, ref) => (
-    <input ref={ref} className={`q-input ${className}`.trim()} {...restProps} />
+    <input ref={ref} className={`input ${className}`.trim()} {...restProps} />
   )
 );

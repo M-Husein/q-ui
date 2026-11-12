@@ -356,7 +356,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
                   ref={searchRef}
                   type="search"
                   tabIndex={-1}
-                  className="q-input"
+                  className="input"
                   placeholder={searchPlaceholder}
                   value={search}
                   onChange={(e) => {

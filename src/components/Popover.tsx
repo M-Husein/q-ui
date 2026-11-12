@@ -1,4 +1,4 @@
-import React, { useId, useRef, useState } from 'react';
+import React, { useId, useRef, useState, useEffect } from 'react';
 
 export interface PopoverProps {
   trigger: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
@@ -27,6 +27,22 @@ export const Popover: React.FC<PopoverProps> = ({
     if (open && !mounted) setMounted(true);
     onToggle?.(open, e);
   };
+
+  // Fallback for browsers without the Popover API: toggle a data attribute and
+  // let the CSS polyfill (html.q-no-popover-api [popover][data-popover-open]) show it.
+  useEffect(() => {
+    const supports =
+      typeof HTMLElement !== 'undefined' &&
+      typeof HTMLElement.prototype.showPopover === 'function';
+    if (supports) return;
+    document.documentElement.classList.add('q-no-popover-api');
+    const el = ref.current;
+    if (!el) return;
+    el.setAttribute('popover', 'manual');
+    const open = isOpen;
+    if (open) el.setAttribute('data-popover-open', '');
+    else el.removeAttribute('data-popover-open');
+  }, [isOpen]);
 
   const triggerEl = React.cloneElement(trigger, {
     popoverTarget: id,

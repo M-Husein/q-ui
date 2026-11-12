@@ -31,13 +31,19 @@ export const Toast: React.FC<ToastProps> = ({
     const node = ref.current;
     if (!node) return;
     if (open) {
-      node.showPopover();
+      if (typeof node.showPopover === 'function') node.showPopover();
+      else {
+        document.documentElement.classList.add('q-no-popover-api');
+        node.setAttribute('popover', 'manual');
+        node.setAttribute('data-popover-open', '');
+      }
       if (duration > 0) {
         const t = setTimeout(() => onClose(), duration);
         return () => clearTimeout(t);
       }
     } else {
-      node.hidePopover();
+      if (typeof node.hidePopover === 'function') node.hidePopover();
+      else node.removeAttribute('data-popover-open');
     }
   }, [open, duration, onClose]);
 

@@ -4,20 +4,24 @@
 }
 
 /* =============================================================================
-   Q UI - FRAMEWORK-AGNOSTIC STYLE LAYER (q-* classes)
-   These classes are intentionally plain CSS so they can be re-used in any
-   framework (React/Vue/Svelte/Angular) or even in raw HTML without Tailwind.
-   DaisyUI/Tailwind utilities are only used as progressive enhancement in demos.
+   Q UI - CUSTOM STYLE LAYER (q-* classes)
+   Components that map 1:1 to DaisyUI (btn, input, textarea, select, checkbox,
+   radio, range, progress, collapse/accordion, tabs, modal, carousel) use DaisyUI
+   classes directly in the React layer. This file only holds:
+     - tokens used by the custom components + Browser-API fallbacks
+     - custom components DaisyUI lacks: Combobox, dual RangeSlider, dialog Drawer
+     - native-popover overlays (Popover / Tooltip / Toast) positioning
+     - minimal fallbacks when a Browser API is unsupported (popover, field-sizing,
+       anchor positioning)
    ============================================================================= */
 
 :root {
   scrollbar-gutter: stable;
 }
 
-/* Base neutral scale (overridable per DaisyUI theme via CSS variables) */
+/* Base neutral scale (consumed by custom Q components; overridable per theme) */
 .q {
   --q-primary: var(--color-primary, #0d6efd);
-  --q-primary-hover: var(--color-primary-focus, #0b5ed7);
   --q-success: var(--color-success, #198754);
   --q-error: var(--color-error, #dc3545);
   --q-warn: var(--color-warning, #ffc107);
@@ -26,554 +30,791 @@
   --q-surface-2: var(--color-base-200, #fafafa);
   --q-border: var(--color-base-300, #e2e8f0);
   --q-text: var(--color-base-content, #212529);
-  --q-muted: var(--color-base-content, #6c757d);
+  --q-muted: color-mix(in srgb, var(--color-base-content, #212529) 60%, transparent);
   --q-ring: color-mix(in srgb, var(--q-primary) 35%, transparent);
   --q-radius: 0.5rem;
 }
 
 /* ---------------------------------------------------------------------------
-   BUTTON  (Polymorphic: button/input/a/div/span …)
+   BROWSER-API FALLBACKS
    --------------------------------------------------------------------------- */
-.q-btn {
-  --b: var(--q-primary);
-  --b-bg: var(--q-primary);
-  --b-fg: #fff;
-  --b-bd: var(--q-primary);
-  --b-h-bg: var(--q-primary-hover);
-  --b-h-bd: var(--q-primary-hover);
-  --b-ring: var(--q-ring);
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  white-space: nowrap;
-  font-family: inherit;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--b-fg);
-  text-align: center;
-  text-decoration: none;
-  vertical-align: middle;
-  cursor: pointer;
-  user-select: none;
-  background-color: var(--b-bg);
-  border: 1px solid var(--b-bd);
-  padding: 0.45rem 0.9rem;
-  font-size: 1rem;
-  border-radius: var(--q-radius);
-  transition: color 0.15s, background-color 0.15s, border-color 0.15s,
-    box-shadow 0.15s, transform 0.05s;
-  -webkit-appearance: none;
-  appearance: none;
+/* Popover API polyfill: when the native API is missing we toggle a data attribute
+   and let these rules show/hide the element (simple, top-layer not replicated). */
+html.q-no-popover-api [popover] {
+  display: none;
 }
-.q-btn:hover:not(:disabled) {
-  color: var(--b-fg);
-  background-color: var(--b-h-bg);
-  border-color: var(--b-h-bd);
+html.q-no-popover-api [popover][data-popover-open] {
+  display: block;
 }
-.q-btn:active:not(:disabled) {
-  transform: translateY(1px);
+
+/* Checkbox/radio indeterminate fallback (DaisyUI has no built-in indeterminate) */
+.checkbox:indeterminate,
+.radio:indeterminate {
+  background-image: linear-gradient(45deg, transparent 45%, var(--q-surface) 45%, var(--q-surface) 55%, transparent 55%);
+  background-color: var(--q-primary);
+  border-color: var(--q-primary);
 }
-.q-btn:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem var(--b-ring);
-}
-.q-btn:disabled,
-.q-btn[disabled] {
+
+/* Disabled state for polymorphic (non-native) buttons that set aria-disabled */
+.btn[aria-disabled='true'] {
   pointer-events: none;
   opacity: 0.6;
-  -webkit-user-drag: none;
 }
-.q-btn.q-sm {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.875rem;
-  border-radius: 0.375rem;
-}
-.q-btn.q-lg {
-  padding: 0.6rem 1.2rem;
-  font-size: 1.15rem;
-  border-radius: 0.625rem;
-}
-
-/* Kinds */
-.q-success { --b-bg: var(--q-success); --b-bd: var(--q-success); --b-h-bg: color-mix(in srgb, var(--q-success) 85%, #000); }
-.q-error   { --b-bg: var(--q-error);   --b-bd: var(--q-error);   --b-h-bg: color-mix(in srgb, var(--q-error) 85%, #000); }
-.q-warn    { --b-bg: var(--q-warn);    --b-bd: var(--q-warn);    --b-fg: #000; --b-h-bg: color-mix(in srgb, var(--q-warn) 85%, #000); --b-h-bd: color-mix(in srgb, var(--q-warn) 85%, #000); }
-.q-info    { --b-bg: var(--q-info);    --b-bd: var(--q-info);    --b-fg: #000; --b-h-bg: color-mix(in srgb, var(--q-info) 85%, #000); --b-h-bd: color-mix(in srgb, var(--q-info) 85%, #000); }
-.q-ghost   { --b-bg: transparent; --b-bd: transparent; --b-fg: var(--q-text); --b-h-bg: color-mix(in srgb, var(--q-text) 12%, transparent); --b-h-bd: transparent; }
-.q-link    { --b-bg: transparent; --b-bd: transparent; --b-fg: var(--q-primary); --b-h-bg: transparent; --b-h-bd: transparent; text-decoration: underline; }
-
-/* Outline variants */
-.q-outline { --b-bg: transparent; --b-fg: var(--q-primary); --b-bd: var(--q-primary); --b-h-bg: var(--q-primary); --b-h-bd: var(--q-primary); --b-h-fg-override: #fff; }
-.q-outline.q-success { --b-fg: var(--q-success); --b-bd: var(--q-success); --b-h-bg: var(--q-success); --b-h-bd: var(--q-success); }
-.q-outline.q-error   { --b-fg: var(--q-error);   --b-bd: var(--q-error);   --b-h-bg: var(--q-error);   --b-h-bd: var(--q-error); }
-.q-outline.q-warn    { --b-fg: var(--q-warn);    --b-bd: var(--q-warn);    --b-h-bg: var(--q-warn);    --b-h-bd: var(--q-warn); }
-.q-outline.q-info    { --b-fg: var(--q-info);    --b-bd: var(--q-info);    --b-h-bg: var(--q-info);    --b-h-bd: var(--q-info); }
-.q-outline:hover:not(:disabled) { color: var(--b-h-fg-override, #fff); }
 
 /* ---------------------------------------------------------------------------
-   CHECKBOX / RADIO
+   SELECT  (DaisyUI `select` + custom clear button)
    --------------------------------------------------------------------------- */
-.q-check,
-.q-radio {
-  --c: var(--q-primary);
-  --c-bg: var(--q-surface);
-  --c-bd: var(--q-border);
+.q-select-wrap {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  width: 100%;
+  min-width: 160px;
+}
+.q-select-wrap > select {
+  width: 100%;
+}
+/* Hide DaisyUI's native arrow when we render our own clear button */
+.q-select-wrap.q-has-clear > select {
+  background-image: none;
+  padding-right: 2.25rem;
+}
+.q-select-clear {
+  position: absolute;
+  right: 0.6rem;
+  display: none;
+  background: transparent;
+  border: 0;
+  color: var(--q-muted);
   cursor: pointer;
-  user-select: none;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: var(--q-text);
-}
-.q-check.q-disabled,
-.q-radio.q-disabled { cursor: not-allowed; opacity: 0.55; }
-.q-check input,
-.q-radio input {
-  appearance: none;
-  -webkit-appearance: none;
-  margin: 0;
-  width: 1.1rem;
-  height: 1.1rem;
-  border: 1px solid var(--c-bd);
-  background-color: var(--c-bg);
-  cursor: inherit;
-  display: grid;
-  place-content: center;
-  flex-shrink: 0;
-  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
-}
-.q-check input { border-radius: 0.3rem; }
-.q-radio input { border-radius: 50%; }
-.q-check input:focus-visible,
-.q-radio input:focus-visible {
-  outline: none;
-  border-color: var(--c);
-  box-shadow: 0 0 0 0.2rem var(--q-ring);
-}
-.q-check input:checked {
-  background-color: var(--c);
-  border-color: var(--c);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3.5 8.5 6.5 11.5 12.5 4.5'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 78%;
-}
-.q-check input:indeterminate {
-  background-color: var(--c);
-  border-color: var(--c);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='4' y1='8' x2='12' y2='8'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 72%;
-}
-.q-radio input::after {
-  content: '';
-  width: 0.55rem;
-  height: 0.55rem;
   border-radius: 50%;
-  background-color: var(--c);
-  transform: scale(0);
-  transition: transform 0.15s;
+  padding: 0.15rem 0.3rem;
+  line-height: 1;
 }
-.q-radio input:checked { border-color: var(--c); }
-.q-radio input:checked::after { transform: scale(1); }
-.q-check input:disabled,
-.q-radio input:disabled { background-color: color-mix(in srgb, var(--q-text) 8%, transparent); }
+.q-select-wrap.q-has-clear:hover .q-select-clear {
+  display: inline-flex;
+}
 
 /* ---------------------------------------------------------------------------
-   FORM CONTROL (input / textarea)
+   RANGE (single)  - DaisyUI `range`; only the value tooltip is custom
    --------------------------------------------------------------------------- */
-.q-input,
-.q-textarea {
-  display: block;
+.q-range-container {
+  position: relative;
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-family: inherit;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--q-text);
-  background-color: var(--q-surface);
+}
+.q-range-tip::after {
+  content: attr(data-value);
+  position: absolute;
+  top: -1.75rem;
+  left: calc(var(--percentage, 0) * 100%);
+  transform: translateX(-50%);
+  background: var(--q-text);
+  color: var(--q-surface);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   PROGRESS  - DaisyUI `progress`; striped/animated are custom add-ons
+   --------------------------------------------------------------------------- */
+.progress.q-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+}
+.progress.q-animated {
+  animation: q-stripes 1s linear infinite;
+}
+@keyframes q-stripes {
+  0% { background-position-x: 1rem; }
+  100% { background-position-x: 0; }
+}
+
+/* ---------------------------------------------------------------------------
+   COMBOBOX  (DaisyUI has no combobox -> custom)
+   --------------------------------------------------------------------------- */
+.q-combobox {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.q-combobox-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--q-surface);
   border: 1px solid var(--q-border);
   border-radius: var(--q-radius);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-sizing: border-box;
 }
-.q-input:focus,
-.q-textarea:focus {
-  outline: 0;
+.q-combobox-trigger:hover:not(:disabled) {
+  border-color: var(--q-primary);
+}
+.q-combobox-trigger:focus-visible {
+  outline: none;
   border-color: var(--q-primary);
   box-shadow: 0 0 0 0.2rem var(--q-ring);
 }
-.q-input:disabled,
-.q-textarea:disabled {
-  background-color: color-mix(in srgb, var(--q-text) 6%, transparent);
+.q-combobox-trigger:disabled {
+  background: color-mix(in srgb, var(--q-text) 6%, transparent);
   cursor: not-allowed;
 }
-.q-textarea { resize: vertical; min-height: 2.5rem; }
-
-/* ---------------------------------------------------------------------------
-   ACCORDION / COLLAPSE  (uses native <details>)
-   --------------------------------------------------------------------------- */
-.q-accordion,
-.q-collapse {
-  border: 1px solid var(--q-border);
-  border-radius: var(--q-radius);
-  margin-bottom: 0.5rem;
-  overflow: hidden;
-  background: var(--q-surface);
-}
-.q-accordion > summary,
-.q-collapse > summary {
+.q-combobox-value {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+}
+.q-combobox-placeholder {
+  color: var(--q-muted);
+}
+.q-combobox-actions {
+  display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  gap: 0.35rem;
+  margin-left: 0.5rem;
+  color: var(--q-muted);
+}
+.q-combobox-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.q-combobox-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--q-surface-2);
+  border: 1px solid var(--q-border);
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.8rem;
+}
+.q-combobox-x {
+  cursor: pointer;
   font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-  list-style: none;
 }
-.q-accordion > summary::-webkit-details-marker,
-.q-collapse > summary::-webkit-details-marker { display: none; }
-.q-accordion > summary::after,
-.q-collapse > summary::after {
-  content: '▼';
-  font-size: 0.75rem;
-  transition: transform 0.2s ease;
+.q-combobox-popover {
+  background: var(--q-surface);
+  border-radius: var(--q-radius);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--q-border);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
-.q-accordion[open] > summary::after,
-.q-collapse[open] > summary::after { transform: rotate(180deg); }
-.q-accordion > .q-accordion-body,
-.q-collapse > .q-collapse-body {
-  padding: 1rem;
-  border-top: 1px solid var(--q-border);
-  background-color: var(--q-surface-2);
+.q-combobox-content {
+  display: flex;
+  flex-direction: column;
 }
-
-/* ---------------------------------------------------------------------------
-   TABS
-   --------------------------------------------------------------------------- */
-.q-tabs { display: flex; border-bottom: 2px solid var(--q-border); gap: 0.25rem; }
-.q-tab {
-  padding: 0.5rem 1rem;
-  border: none;
+.q-combobox-search {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--q-border);
+  gap: 0.5rem;
+}
+.q-combobox-search input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  font-size: 0.9rem;
   background: transparent;
-  font-weight: 500;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
   color: var(--q-text);
 }
-.q-tab[aria-selected='true'] {
-  border-bottom-color: var(--q-primary);
-  color: var(--q-primary);
-  font-weight: 600;
+.q-combobox-list {
+  width: 100%;
+  max-height: 18rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
-.q-tab-panel { padding: 1rem 0; }
-
-/* ---------------------------------------------------------------------------
-   PROGRESS
-   --------------------------------------------------------------------------- */
-.q-progress {
-  --p-h: 1rem;
-  --p-bg: var(--q-border);
-  --p-fg: var(--q-primary);
-  --p-w: 0%;
-  position: relative;
+.q-combobox-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: var(--p-h);
-  width: 100%;
-  overflow: hidden;
+  justify-content: space-between;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--q-text);
+}
+.q-combobox-list:not(.q-virtual) .q-combobox-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 2rem;
+}
+.q-combobox-item:hover,
+.q-combobox-item.q-active {
+  background: var(--q-surface-2);
+}
+.q-combobox-item[aria-selected='true'] {
+  font-weight: 600;
+  color: var(--q-primary);
+  background: color-mix(in srgb, var(--q-primary) 12%, transparent);
+}
+.q-combobox-item[aria-disabled='true'] {
+  color: var(--q-muted);
+  cursor: not-allowed;
+}
+.q-combobox-group-label {
+  padding: 0.4rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
-  background-color: var(--p-bg);
-  border-radius: 999px;
+  color: var(--q-muted);
+  background: var(--q-surface-2);
+  position: sticky;
+  top: 0;
 }
-.q-progress::after {
-  content: var(--p-label, '');
+.q-combobox-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--q-muted);
+  font-size: 0.9rem;
+}
+.q-combobox-list.q-virtual {
+  height: 18rem;
+  position: relative;
+}
+.q-combobox-virtual-inner {
+  width: 100%;
+  position: relative;
+}
+.q-combobox-list.q-virtual .q-combobox-item {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--p-w);
-  background-color: var(--p-fg);
-  color: #fff;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   RANGE SLIDER (dual-handle)  - DaisyUI has no dual range -> custom
+   --------------------------------------------------------------------------- */
+.q-slider {
+  position: relative;
+  width: 100%;
+  height: 24px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-  border-radius: inherit;
 }
-.q-progress.q-transition::after { transition: width 0.5s ease; }
-.q-progress.q-success { --p-fg: var(--q-success); }
-.q-progress.q-error   { --p-fg: var(--q-error); }
-.q-progress.q-warn    { --p-fg: var(--q-warn); --p-text: #000; }
-.q-progress.q-info    { --p-fg: var(--q-info); --p-text: #000; }
-.q-progress.q-striped::after {
-  background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
-  background-size: 1rem 1rem;
-}
-.q-progress.q-animated::after { animation: q-stripes 1s linear infinite; }
-@keyframes q-stripes { 0% { background-position-x: 1rem; } 100% { background-position-x: 0; } }
-
-/* ---------------------------------------------------------------------------
-   RANGE / RANGE SLIDER
-   --------------------------------------------------------------------------- */
-.q-range {
-  --thumb: var(--q-primary);
-  --thumb-w: 16px;
-  width: 100%;
-  height: 0.5rem;
-  padding: 0;
-  background-color: var(--q-border);
-  border-radius: 1rem;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-.q-range:focus-visible { outline: 2px solid var(--thumb); outline-offset: 3px; }
-.q-range::-webkit-slider-thumb {
-  width: var(--thumb-w);
-  height: var(--thumb-w);
-  margin-top: -4px;
-  background: var(--thumb);
-  border: 0;
-  border-radius: 50%;
-  -webkit-appearance: none;
-  appearance: none;
-}
-.q-range::-moz-range-thumb {
-  width: var(--thumb-w);
-  height: var(--thumb-w);
-  background: var(--thumb);
-  border: 0;
-  border-radius: 50%;
-}
-
-.q-slider { position: relative; width: 100%; height: 24px; display: flex; align-items: center; }
 .q-slider-track {
-  position: absolute; left: 0; right: 0; height: 4px;
-  border-radius: 4px; background: var(--q-border); z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--q-border);
+  z-index: 1;
 }
 .q-slider-fill {
-  position: absolute; height: 4px; border-radius: 4px;
-  background: var(--q-primary); z-index: 2;
+  position: absolute;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--q-primary);
+  z-index: 2;
 }
 .q-slider input[type='range'] {
-  pointer-events: none; position: absolute; left: 0; width: 100%;
-  height: 0; margin: 0; appearance: none; -webkit-appearance: none; background: transparent;
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
 }
 .q-slider input[type='range']::-webkit-slider-thumb {
-  pointer-events: auto; -webkit-appearance: none; appearance: none;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: #fff; border: 2px solid var(--q-primary); cursor: pointer;
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--q-primary);
+  cursor: pointer;
 }
 .q-slider input[type='range']::-moz-range-thumb {
-  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
-  background: #fff; border: 2px solid var(--q-primary); cursor: pointer;
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--q-primary);
+  cursor: pointer;
 }
 
 /* ---------------------------------------------------------------------------
-   SELECT
+   DRAWER  (dialog-based; DaisyUI `drawer` is checkbox-layout, not a dialog)
    --------------------------------------------------------------------------- */
-.q-select-wrap { position: relative; display: inline-flex; align-items: center; width: 100%; min-width: 160px; }
-.q-select {
-  appearance: none; -webkit-appearance: none;
-  width: 100%; height: 2.25rem; padding: 0 2rem 0 0.75rem;
-  font-size: 0.9rem; color: var(--q-text);
-  background-color: var(--q-surface); border: 1px solid var(--q-border);
-  border-radius: var(--q-radius); cursor: pointer; outline: none;
-}
-.q-select:hover:not(:disabled) { border-color: var(--q-primary); }
-.q-select:focus-visible { border-color: var(--q-primary); box-shadow: 0 0 0 0.2rem var(--q-ring); }
-.q-select:disabled { background: color-mix(in srgb, var(--q-text) 6%, transparent); cursor: not-allowed; }
-.q-select-arrow {
-  position: absolute; right: 0.7rem; pointer-events: none; width: 0.5rem; height: 0.5rem;
-  border-right: 2px solid var(--q-muted); border-bottom: 2px solid var(--q-muted);
-  transform: rotate(45deg);
-}
-.q-select-clear {
-  position: absolute; right: 0.5rem; background: transparent; border: 0;
-  color: var(--q-muted); cursor: pointer; border-radius: 50%; padding: 0.2rem; line-height: 1;
-  display: none;
-}
-.q-select-wrap.q-has-clear:hover .q-select-clear { display: inline-flex; }
-
-/* ---------------------------------------------------------------------------
-   COMBOBOX
-   --------------------------------------------------------------------------- */
-.q-combobox { position: relative; display: inline-block; width: 100%; }
-.q-combobox-trigger {
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%; min-height: 2.4rem; padding: 0.4rem 0.75rem;
-  background: var(--q-surface); border: 1px solid var(--q-border);
-  border-radius: var(--q-radius); font-size: 0.9rem; cursor: pointer; box-sizing: border-box;
-}
-.q-combobox-trigger:hover:not(:disabled) { border-color: var(--q-primary); }
-.q-combobox-trigger:focus-visible { outline: none; border-color: var(--q-primary); box-shadow: 0 0 0 0.2rem var(--q-ring); }
-.q-combobox-trigger:disabled { background: color-mix(in srgb, var(--q-text) 6%, transparent); cursor: not-allowed; }
-.q-combobox-value { display: flex; flex-wrap: wrap; gap: 0.25rem; flex: 1; text-align: left; overflow: hidden; }
-.q-combobox-placeholder { color: var(--q-muted); }
-.q-combobox-actions { display: flex; align-items: center; gap: 0.35rem; margin-left: 0.5rem; color: var(--q-muted); }
-.q-combobox-tag {
-  display: inline-flex; align-items: center; gap: 0.25rem;
-  background: var(--q-surface-2); border: 1px solid var(--q-border);
-  border-radius: 0.3rem; padding: 0.1rem 0.5rem; font-size: 0.8rem;
-}
-.q-combobox-x { cursor: pointer; font-weight: 600; }
-.q-combobox-popover {
-  background: var(--q-surface); border-radius: var(--q-radius);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12), 0 3px 6px -4px rgba(0,0,0,0.12);
-  border: 1px solid var(--q-border); width: 100%; box-sizing: border-box; overflow: hidden;
-}
-.q-combobox-search { display: flex; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--q-border); gap: 0.5rem; }
-.q-combobox-search input { width: 100%; border: 0; outline: none; font-size: 0.9rem; background: transparent; color: var(--q-text); }
-.q-combobox-list { width: 100%; max-height: 18rem; overflow-y: auto; overscroll-behavior: contain; }
-.q-combobox-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.4rem 0.75rem; font-size: 0.9rem; cursor: pointer; color: var(--q-text);
-}
-.q-combobox-list:not(.q-virtual) .q-combobox-item { content-visibility: auto; contain-intrinsic-size: 0 2rem; }
-.q-combobox-item:hover, .q-combobox-item.q-active { background: var(--q-surface-2); }
-.q-combobox-item[aria-selected='true'] { font-weight: 600; color: var(--q-primary); background: color-mix(in srgb, var(--q-primary) 12%, transparent); }
-.q-combobox-item[aria-disabled='true'] { color: var(--q-muted); cursor: not-allowed; }
-.q-combobox-group-label { padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: var(--q-muted); background: var(--q-surface-2); position: sticky; top: 0; }
-.q-combobox-empty { padding: 1rem; text-align: center; color: var(--q-muted); font-size: 0.9rem; }
-.q-combobox-list.q-virtual { height: 18rem; position: relative; }
-.q-combobox-virtual-inner { width: 100%; position: relative; }
-.q-combobox-list.q-virtual .q-combobox-item { position: absolute; top: 0; left: 0; width: 100%; }
-
-/* ---------------------------------------------------------------------------
-   MODAL / DRAWER  (native <dialog> top-layer)
-   --------------------------------------------------------------------------- */
-.q-modal {
-  border: 0; border-radius: 0.75rem; padding: 1.5rem;
-  max-width: 32rem; width: 90%; background: var(--q-surface); color: var(--q-text);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2); visibility: hidden;
-}
-.q-modal[open] { visibility: visible; }
-.q-modal::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
-.q-modal.q-no-backdrop { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); margin: 0; }
-
 .q-drawer {
-  position: fixed; padding: 0; border: 0; background: transparent;
-  max-width: none; max-height: none; width: 100%; height: 100%; overflow: hidden; margin: 0;
+  position: fixed;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
 }
-.q-drawer::backdrop { background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.25s; }
-.q-drawer[open]::backdrop { opacity: 1; }
+.q-drawer::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.q-drawer[open]::backdrop {
+  opacity: 1;
+}
 .q-drawer-content {
-  display: flex; flex-direction: column; background: var(--q-surface); color: var(--q-text);
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15); position: absolute;
-  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  display: flex;
+  flex-direction: column;
+  background: var(--q-surface);
+  color: var(--q-text);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  position: absolute;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.q-drawer-end .q-drawer-content { top: 0; right: 0; bottom: 0; width: 24rem; max-width: 100vw; transform: translateX(100%); }
-.q-drawer[open].q-drawer-end .q-drawer-content { transform: translateX(0); }
-@starting-style { .q-drawer[open].q-drawer-end .q-drawer-content { transform: translateX(100%); } }
-.q-drawer-start .q-drawer-content { top: 0; left: 0; bottom: 0; width: 24rem; max-width: 100vw; transform: translateX(-100%); }
-.q-drawer[open].q-drawer-start .q-drawer-content { transform: translateX(0); }
-@starting-style { .q-drawer[open].q-drawer-start .q-drawer-content { transform: translateX(-100%); } }
-.q-drawer-top .q-drawer-content { top: 0; left: 0; right: 0; height: 18rem; max-height: 100vh; transform: translateY(-100%); }
-.q-drawer[open].q-drawer-top .q-drawer-content { transform: translateY(0); }
-@starting-style { .q-drawer[open].q-drawer-top .q-drawer-content { transform: translateY(-100%); } }
-.q-drawer-bottom .q-drawer-content { bottom: 0; left: 0; right: 0; height: 24rem; max-height: 100vh; transform: translateY(100%); }
-.q-drawer[open].q-drawer-bottom .q-drawer-content { transform: translateY(0); }
-@starting-style { .q-drawer[open].q-drawer-bottom .q-drawer-content { transform: translateY(100%); } }
-.q-drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid var(--q-border); }
-.q-drawer-title { margin: 0; font-size: 1.15rem; font-weight: 600; }
-.q-drawer-body { flex: 1 1 auto; padding: 1.25rem; overflow-y: auto; overscroll-behavior: contain; }
-.q-drawer-footer { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; padding: 0.75rem 1.25rem; border-top: 1px solid var(--q-border); }
+.q-drawer-end .q-drawer-content {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24rem;
+  max-width: 100vw;
+  transform: translateX(100%);
+}
+.q-drawer[open].q-drawer-end .q-drawer-content {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-drawer[open].q-drawer-end .q-drawer-content {
+    transform: translateX(100%);
+  }
+}
+.q-drawer-start .q-drawer-content {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 24rem;
+  max-width: 100vw;
+  transform: translateX(-100%);
+}
+.q-drawer[open].q-drawer-start .q-drawer-content {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-drawer[open].q-drawer-start .q-drawer-content {
+    transform: translateX(-100%);
+  }
+}
+.q-drawer-top .q-drawer-content {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 18rem;
+  max-height: 100vh;
+  transform: translateY(-100%);
+}
+.q-drawer[open].q-drawer-top .q-drawer-content {
+  transform: translateY(0);
+}
+@starting-style {
+  .q-drawer[open].q-drawer-top .q-drawer-content {
+    transform: translateY(-100%);
+  }
+}
+.q-drawer-bottom .q-drawer-content {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24rem;
+  max-height: 100vh;
+  transform: translateY(100%);
+}
+.q-drawer[open].q-drawer-bottom .q-drawer-content {
+  transform: translateY(0);
+}
+@starting-style {
+  .q-drawer[open].q-drawer-bottom .q-drawer-content {
+    transform: translateY(100%);
+  }
+}
+.q-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--q-border);
+}
+.q-drawer-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.q-drawer-body {
+  flex: 1 1 auto;
+  padding: 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.q-drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--q-border);
+}
+
+/* Close button shared by Modal / Drawer */
 .q-close {
-  box-sizing: content-box; width: 1em; height: 1em; padding: 0.25em; color: var(--q-text);
-  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3E%3Cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3E%3C/svg%3E") center/1em auto no-repeat;
-  border: 0; border-radius: 0.375rem; opacity: 0.5; cursor: pointer;
+  box-sizing: content-box;
+  width: 1em;
+  height: 1em;
+  padding: 0.25em;
+  color: var(--q-text);
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3E%3Cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3E%3C/svg%3E")
+    center / 1em auto no-repeat;
+  border: 0;
+  border-radius: 0.375rem;
+  opacity: 0.5;
+  cursor: pointer;
 }
-.q-close:hover { opacity: 0.8; }
+.q-close:hover {
+  opacity: 0.8;
+}
 
 /* ---------------------------------------------------------------------------
-   POPOVER / TOOLTIP / TOAST  (native popover API)
+   POPOVER / TOOLTIP / TOAST  (native Popover API + Anchor Positioning)
    --------------------------------------------------------------------------- */
 [popover] {
-  border: 0; padding: 0; margin: 0; background: transparent; overflow: visible;
-  inset: auto; box-sizing: border-box; min-width: anchor-size(width);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  overflow: visible;
+  inset: auto;
+  box-sizing: border-box;
 }
-.q-popover, .q-tooltip, .q-toast {
-  transition: opacity 0.2s cubic-bezier(0.16,1,0.3,1), transform 0.2s cubic-bezier(0.16,1,0.3,1),
+.q-popover,
+.q-tooltip,
+.q-toast {
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
     display 0.2s allow-discrete, overlay 0.2s allow-discrete;
   opacity: 0;
 }
-.q-popover:popover-open, .q-tooltip:popover-open, .q-toast:popover-open { opacity: 1; }
-.q-popover {
-  top: anchor(bottom); left: anchor(left); margin-top: 0.5rem;
-  background: var(--q-surface); border: 1px solid var(--q-border); border-radius: var(--q-radius);
-  padding: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-  transform: translateY(-8px) scale(0.96);
+.q-popover:popover-open,
+.q-tooltip:popover-open,
+.q-toast:popover-open {
+  opacity: 1;
 }
-.q-popover:popover-open { transform: translateY(0) scale(1); }
-@starting-style { .q-popover:popover-open { opacity: 0; transform: translateY(-8px) scale(0.96); } }
-.q-tooltip {
-  bottom: anchor(top); left: anchor(center); transform: translateX(-50%) translateY(4px);
-  margin-bottom: 0.5rem; background: #1e293b; color: #fff; padding: 0.4rem 0.8rem;
-  border-radius: 0.3rem; font-size: 0.8rem; white-space: nowrap;
+
+/* Anchor Positioning is supported: use it directly */
+@supports (anchor-name: --q-anchor) {
+  .q-popover {
+    position: fixed;
+    top: anchor(bottom);
+    left: anchor(left);
+    margin-top: 0.5rem;
+    background: var(--q-surface);
+    border: 1px solid var(--q-border);
+    border-radius: var(--q-radius);
+    padding: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px) scale(0.96);
+  }
+  .q-popover:popover-open {
+    transform: translateY(0) scale(1);
+  }
+  @starting-style {
+    .q-popover:popover-open {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+  }
+  .q-tooltip {
+    position: fixed;
+    bottom: anchor(top);
+    left: anchor(center);
+    transform: translateX(-50%) translateY(4px);
+    margin-bottom: 0.5rem;
+    background: #1e293b;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .q-tooltip:popover-open {
+    transform: translateX(-50%) translateY(0);
+  }
+  @starting-style {
+    .q-tooltip:popover-open {
+      opacity: 0;
+      transform: translateX(-50%) translateY(4px);
+    }
+  }
 }
-.q-tooltip:popover-open { transform: translateX(-50%) translateY(0); }
-@starting-style { .q-tooltip:popover-open { opacity: 0; transform: translateX(-50%) translateY(4px); } }
-@supports (position-try-fallbacks: flip-block) { .q-popover, .q-tooltip { position-try-fallbacks: flip-block; } }
 
 .q-toast {
-  position: fixed; background: #0f172a; color: #fff; padding: 0.875rem 1.25rem;
-  border-radius: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
-  display: flex; align-items: center; gap: 1rem; width: max-content; max-width: calc(100vw - 3rem); z-index: 9999;
+  position: fixed;
+  background: #0f172a;
+  color: #fff;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: max-content;
+  max-width: calc(100vw - 3rem);
+  z-index: 9999;
 }
-.q-toast.pos-top { top: 1.5rem; left: 0; right: 0; margin: 0 auto; transform: translateY(-100%); }
-.q-toast.pos-top:popover-open { transform: translateY(0); }
-@starting-style { .q-toast.pos-top:popover-open { opacity: 0; transform: translateY(-100%); } }
-.q-toast.pos-bottom { bottom: 1.5rem; left: 0; right: 0; margin: 0 auto; transform: translateY(100%); }
-.q-toast.pos-bottom:popover-open { transform: translateY(0); }
-@starting-style { .q-toast.pos-bottom:popover-open { opacity: 0; transform: translateY(100%); } }
-.q-toast.pos-bottomLeft { bottom: 1.5rem; left: 1.5rem; transform: translateX(-100%); }
-.q-toast.pos-bottomLeft:popover-open { transform: translateX(0); }
-@starting-style { .q-toast.pos-bottomLeft:popover-open { opacity: 0; transform: translateX(-100%); } }
-.q-toast.pos-topLeft { top: 1.5rem; left: 1.5rem; transform: translateX(-100%); }
-.q-toast.pos-topLeft:popover-open { transform: translateX(0); }
-@starting-style { .q-toast.pos-topLeft:popover-open { opacity: 0; transform: translateX(-100%); } }
-.q-toast.pos-bottomRight { bottom: 1.5rem; right: 1.5rem; transform: translateX(100%); }
-.q-toast.pos-bottomRight:popover-open { transform: translateX(0); }
-@starting-style { .q-toast.pos-bottomRight:popover-open { opacity: 0; transform: translateX(100%); } }
-.q-toast.pos-topRight { top: 1.5rem; right: 1.5rem; transform: translateX(100%); }
-.q-toast.pos-topRight:popover-open { transform: translateX(0); }
-@starting-style { .q-toast.pos-topRight:popover-open { opacity: 0; transform: translateX(100%); } }
-.q-toast-close { background: transparent; border: 0; color: #94a3b8; cursor: pointer; font-size: 1rem; line-height: 1; padding: 0.2rem; border-radius: 0.25rem; }
-.q-toast-close:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.q-toast.pos-top {
+  top: 1.5rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(-100%);
+}
+.q-toast.pos-top:popover-open {
+  transform: translateY(0);
+}
+@starting-style {
+  .q-toast.pos-top:popover-open {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+.q-toast.pos-bottom {
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(100%);
+}
+.q-toast.pos-bottom:popover-open {
+  transform: translateY(0);
+}
+@starting-style {
+  .q-toast.pos-bottom:popover-open {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.q-toast.pos-bottomLeft {
+  bottom: 1.5rem;
+  left: 1.5rem;
+  transform: translateX(-100%);
+}
+.q-toast.pos-bottomLeft:popover-open {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-toast.pos-bottomLeft:popover-open {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+.q-toast.pos-topLeft {
+  top: 1.5rem;
+  left: 1.5rem;
+  transform: translateX(-100%);
+}
+.q-toast.pos-topLeft:popover-open {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-toast.pos-topLeft:popover-open {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+.q-toast.pos-bottomRight {
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transform: translateX(100%);
+}
+.q-toast.pos-bottomRight:popover-open {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-toast.pos-bottomRight:popover-open {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+.q-toast.pos-topRight {
+  top: 1.5rem;
+  right: 1.5rem;
+  transform: translateX(100%);
+}
+.q-toast.pos-topRight:popover-open {
+  transform: translateX(0);
+}
+@starting-style {
+  .q-toast.pos-topRight:popover-open {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+.q-toast-close {
+  background: transparent;
+  border: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.2rem;
+  border-radius: 0.25rem;
+}
+.q-toast-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
 
 /* ---------------------------------------------------------------------------
-   CAROUSEL
+   CAROUSEL  (DaisyUI `carousel` / `carousel-item`; dots are custom)
    --------------------------------------------------------------------------- */
-.q-carousel { position: relative; width: 100%; max-width: 50rem; margin: 0 auto; }
-.q-carousel-track {
-  display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
-  scrollbar-width: none; overscroll-behavior: contain; border-radius: 0.75rem;
+.q-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 50rem;
+  margin: 0 auto;
 }
-.q-carousel-track::-webkit-scrollbar { display: none; }
-.q-carousel-slide { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; box-sizing: border-box; }
-.q-carousel img { -webkit-user-drag: none; user-select: none; pointer-events: none; }
-.q-carousel-controls { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); display: flex; justify-content: space-between; padding: 0 0.5rem; pointer-events: none; }
+.q-carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+  pointer-events: none;
+}
 .q-carousel-btn {
-  pointer-events: auto; background: rgba(15,23,42,0.7); color: #fff; border: 0;
-  width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.5rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.7);
+  color: #fff;
+  border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
-.q-carousel-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-.q-carousel-pagination { display: flex; justify-content: center; gap: 0.5rem; margin-top: 0.75rem; }
-.q-carousel-dot { width: 0.625rem; height: 0.625rem; border-radius: 50%; border: 0; background: #cbd5e1; cursor: pointer; padding: 0; }
-.q-carousel-dot.q-active { background: var(--q-primary); transform: scale(1.25); }
+.q-carousel-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+.q-carousel-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.q-carousel-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  border: 0;
+  background: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+}
+.q-carousel-dot.q-active {
+  background: var(--q-primary);
+  transform: scale(1.25);
+}
 
 /* ---------------------------------------------------------------------------
    UTILITIES
    --------------------------------------------------------------------------- */
-.q-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.q-disabled { opacity: 0.6; pointer-events: none; }
+.q-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.q-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.q-muted {
+  color: var(--q-muted);
+}
+
+/* Textarea autosize fallback (used only when CSS field-sizing is unsupported) */
+.q-textarea-autosize-wrapper {
+  display: grid;
+}
+.q-textarea-autosize-wrapper::after {
+  content: attr(data-val) ' ';
+  white-space: pre-wrap;
+  visibility: hidden;
+  grid-area: 1 / 1;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  line-height: 1.5;
+  min-height: calc(var(--min-rows, 3) * 1.5em);
+  max-height: calc(var(--max-rows, 6) * 1.5em);
+  overflow: hidden;
+}
+.q-textarea-autosize-wrapper > textarea {
+  grid-area: 1 / 1;
+  resize: none;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   DEMO LAYOUT HELPERS (used by the playground App only)
+   --------------------------------------------------------------------------- */
+.q-app {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+.q-section {
+  margin-block: 2.5rem;
+}
+.q-section > h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--q-border);
+  padding-bottom: 0.5rem;
+}
+.q-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+.q-grid {
+  display: grid;
+  gap: 1rem;
+}

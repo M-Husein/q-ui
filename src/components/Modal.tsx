@@ -75,7 +75,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   const classes = [
-    'q-modal',
+    'modal',
     lockScroll ? 'q-lock-scroll' : '',
     backdrop === false ? 'q-no-backdrop' : '',
     className,
@@ -86,7 +86,9 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <dialog ref={ref} onClick={handleBackdrop} className={classes} {...rest}>
-      {children}
+      <div className="modal-box">
+        {children}
+      </div>
     </dialog>
   );
 };

@@ -39,10 +39,10 @@ export const Progress: React.FC<ProgressProps> = ({
   const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
 
   const variantClass =
-    variant === 'primary' ? '' : `q-${variant === 'error' ? 'error' : variant}`;
+    variant === 'primary' ? '' : `progress-${variant === 'error' ? 'error' : variant}`;
 
   const classes = [
-    'q-progress',
+    'progress',
     variantClass,
     transition ? 'q-transition' : '',
     striped ? 'q-striped' : '',

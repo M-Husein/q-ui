@@ -67,7 +67,7 @@ export const Range = React.forwardRef<HTMLInputElement, RangeProps>(
         <input
           ref={innerRef}
           type="range"
-          className="q-range"
+          className="range"
           min={min}
           max={max}
           step={step}

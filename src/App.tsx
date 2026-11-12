@@ -80,7 +80,7 @@ export const App = () => {
   const handleOpened = () => toggleInert(true);
 
   return (
-    <div className="q-app" data-q-theme-scope>
+    <div className="q-app">
       <header className="q-section" style={{ borderBottom: '2px solid var(--q-border)' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>Q UI</h1>
         <p className="q-muted">Framework-agnostic Web UI · Tailwind CSS · DaisyUI · React</p>
@@ -216,7 +216,7 @@ export const App = () => {
           <BasicDrawerDemo />
           <NavigationDrawerDemo />
         </div>
-        <Modal open={openModal} onOpen={handleOpened} onClose={handleClose} id="q-modal" aria-labelledby="q-modal-title">
+        <Modal open={openModal} onOpen={handleOpened} onClose={handleClose} aria-labelledby="q-modal-title">
           <Button outline kind="error" aria-label="Close" onClick={handleClose}>✕</Button>
           <h2 id="q-modal-title">User Settings</h2>
           <p>Modal berbasis native &lt;dialog&gt; dengan backdrop.</p>

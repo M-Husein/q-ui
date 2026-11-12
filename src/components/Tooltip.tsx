@@ -18,9 +18,21 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const show = () => {
     if (!mounted) setMounted(true);
-    requestAnimationFrame(() => ref.current?.showPopover());
+    const el = ref.current;
+    if (!el) return;
+    if (typeof el.showPopover === 'function') el.showPopover();
+    else {
+      document.documentElement.classList.add('q-no-popover-api');
+      el.setAttribute('popover', 'manual');
+      el.setAttribute('data-popover-open', '');
+    }
   };
-  const hide = () => ref.current?.hidePopover();
+  const hide = () => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof el.hidePopover === 'function') el.hidePopover();
+    else el.removeAttribute('data-popover-open');
+  };
 
   const child = React.cloneElement(children as React.ReactElement<any>, {
     onMouseEnter: show,

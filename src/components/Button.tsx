@@ -1,5 +1,15 @@
 import React from 'react';
 
+const DAISY_COLOR: Record<string, string> = {
+  main: 'primary',
+  success: 'success',
+  error: 'error',
+  warn: 'warning',
+  info: 'info',
+  ghost: 'ghost',
+  link: 'link',
+};
+
 export type QButtonKind =
   | 'main'
   | 'success'
@@ -36,7 +46,7 @@ export const Button: QButtonComponent = React.forwardRef(
     {
       as,
       type,
-      base = 'q-btn',
+      base = 'btn',
       kind = 'main',
       size,
       outline,
@@ -51,14 +61,16 @@ export const Button: QButtonComponent = React.forwardRef(
     const Component = as || 'button';
     const isNativeButton = Component === 'button' || Component === 'input';
 
-    const kindClass =
-      kind && kind !== 'main'
-        ? `${outline ? 'q-outline ' : ''}q-${kind}`
-        : outline
-          ? 'q-outline'
-          : '';
+    const colorClass = DAISY_COLOR[kind] ? `btn-${DAISY_COLOR[kind]}` : '';
+    const kindClass = [
+      colorClass,
+      outline ? 'btn-outline' : '',
+      size ? `btn-${size}` : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-    const classes = [base, kindClass, size ? `q-${size}` : '', className]
+    const classes = [base, kindClass, className]
       .filter(Boolean)
       .join(' ')
       .trim();

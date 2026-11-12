@@ -67,7 +67,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           defaultValue={defaultValue}
           disabled={disabled}
           onChange={(e) => onChange?.(e.target.value, e)}
-          className="q-select"
+          className="select"
           {...restProps}
         >
           {placeholder && (
