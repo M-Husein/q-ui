@@ -1,11 +1,6 @@
-import React, { useRef, useState } from 'react';
-import type { DemoRoute } from '../pages/routes';
-
-export interface AppLayoutProps {
-  routes: DemoRoute[];
-  activeId: string;
-  children: React.ReactNode;
-}
+import { useRef } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { demoRoutes } from '../pages/routes';
 
 const DRAWER_ID = 'q-app-drawer';
 const DESKTOP_QUERY = '(min-width: 1024px)';
@@ -16,13 +11,15 @@ const DESKTOP_QUERY = '(min-width: 1024px)';
  *   controls the expanded (checked) / icon-rail (unchecked) state.
  * - below lg: the sidebar is an overlay drawer, closed by default.
  * The checkbox is `inline` so it is not hidden by `drawer-open`.
+ *
+ * Renders as a react-router layout route: child pages render in <Outlet />.
  */
-export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
+export const AppLayout = () => {
   const toggleRef = useRef<HTMLInputElement>(null);
   // Desktop starts expanded, tablet/mobile starts with the overlay closed.
-  const [startExpanded] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
+  const startExpanded = typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches;
 
-  // Only close the overlay on small screens. On desktop, picking a menu item keeps the sidebar as it is.
+  // Close the overlay after navigating on small screens only.
   const closeOverlayOnSmall = () => {
     if (!window.matchMedia(DESKTOP_QUERY).matches && toggleRef.current) {
       toggleRef.current.checked = false;
@@ -55,7 +52,9 @@ export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
           <div className="px-4 font-bold">Q UI</div>
         </nav>
 
-        <main className="q-app w-full">{children}</main>
+        <main className="q-app w-full">
+          <Outlet />
+        </main>
       </div>
 
       <div className="drawer-side is-drawer-close:overflow-visible">
@@ -63,18 +62,19 @@ export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
         <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
           <ul className="menu w-full grow">
             <li className="menu-title is-drawer-close:hidden">Components</li>
-            {routes.map((r) => (
-              <li key={r.id}>
-                <a
-                  href={`#/${r.id}`}
-                  className={`is-drawer-close:tooltip is-drawer-close:tooltip-right ${activeId === r.id ? 'menu-active' : ''}`}
-                  data-tip={r.label}
-                  aria-current={activeId === r.id ? 'page' : undefined}
+            {demoRoutes.map((r) => (
+              <li key={r.path}>
+                <NavLink
+                  to={r.path}
                   onClick={closeOverlayOnSmall}
+                  data-tip={r.label}
+                  className={({ isActive }) =>
+                    `is-drawer-close:tooltip is-drawer-close:tooltip-right ${isActive ? 'menu-active' : ''}`
+                  }
                 >
                   <span className="inline-flex size-4 items-center justify-center text-xs font-bold">{r.short}</span>
                   <span className="is-drawer-close:hidden">{r.label}</span>
-                </a>
+                </NavLink>
               </li>
             ))}
           </ul>

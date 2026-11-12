@@ -1,24 +1,43 @@
-import { useEffect, useState } from 'react';
+import { Refine } from '@refinedev/core';
+import routerBindings, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router-v6';
+import { Navigate, Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { qAuthProvider } from './lib/authProvider';
 import { AppLayout } from './layout/AppLayout';
-import { demoRoutes, findRoute } from './pages/routes';
+import { DEFAULT_PATH, demoRoutes } from './pages/routes';
+import { NotFound } from './pages/NotFound';
 
-const readHash = () => window.location.hash.replace(/^#\/?/, '');
+/** Root route: wraps everything in Refine (headless core + react-router bindings). */
+const Application = () => (
+  <Refine
+    authProvider={qAuthProvider}
+    routerProvider={routerBindings}
+    resources={demoRoutes.map((r) => ({ name: r.path.slice(1), meta: { label: r.label } }))}
+    options={{
+      disableTelemetry: true,
+      syncWithLocation: true,
+      warnWhenUnsavedChanges: false,
+    }}
+  >
+    <Outlet />
+    <DocumentTitleHandler handler={({ resource }) => `${resource?.meta?.label ?? 'Q UI'} · Q UI`} />
+    <UnsavedChangesNotifier />
+  </Refine>
+);
 
-export const App = () => {
-  const [activeId, setActiveId] = useState<string>(() => readHash() || demoRoutes[0].id);
+const router = createBrowserRouter([
+  {
+    Component: Application,
+    children: [
+      {
+        Component: AppLayout,
+        children: [
+          { index: true, element: <Navigate to={DEFAULT_PATH} replace /> },
+          ...demoRoutes.map((r) => ({ path: r.path, Component: r.component })),
+          { path: '*', Component: NotFound },
+        ],
+      },
+    ],
+  },
+]);
 
-  useEffect(() => {
-    const onHash = () => setActiveId(readHash() || demoRoutes[0].id);
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
-
-  const route = findRoute(activeId) ?? demoRoutes[0];
-  const Page = route.component;
-
-  return (
-    <AppLayout routes={demoRoutes} activeId={route.id}>
-      <Page />
-    </AppLayout>
-  );
-};
+export const App = () => <RouterProvider router={router} />;

@@ -11,7 +11,8 @@ import { ProgressPage, RangePage } from './ProgressPage';
 import { SelectPage } from './SelectPage';
 
 export interface DemoRoute {
-  id: string;
+  /** URL path, e.g. `/button`. */
+  path: string;
   label: string;
   /** Two-letter glyph shown in the collapsed (icon-only) sidebar. */
   short: string;
@@ -19,19 +20,19 @@ export interface DemoRoute {
 }
 
 export const demoRoutes: DemoRoute[] = [
-  { id: 'accordion', label: 'Accordion', short: 'Ac', component: AccordionPage },
-  { id: 'button', label: 'Button', short: 'Bt', component: ButtonPage },
-  { id: 'carousel', label: 'Carousel', short: 'Ca', component: CarouselPage },
-  { id: 'checkbox', label: 'Checkbox & Radio', short: 'Ch', component: CheckboxPage },
-  { id: 'collapse', label: 'Collapse', short: 'Co', component: CollapsePage },
-  { id: 'combobox', label: 'Combobox', short: 'Cb', component: ComboboxPage },
-  { id: 'input', label: 'Input & Textarea', short: 'In', component: InputPage },
-  { id: 'modal-drawer', label: 'Modal & Drawer', short: 'Md', component: ModalDrawerPage },
-  { id: 'overlay', label: 'Popover, Tooltip & Toast', short: 'Po', component: OverlayPage },
-  { id: 'progress', label: 'Progress', short: 'Pr', component: ProgressPage },
-  { id: 'range', label: 'Range & Slider', short: 'Rg', component: RangePage },
-  { id: 'select', label: 'Select', short: 'Se', component: SelectPage },
-  { id: 'tabs', label: 'Tabs', short: 'Tb', component: TabsPage },
+  { path: '/accordion', label: 'Accordion', short: 'Ac', component: AccordionPage },
+  { path: '/button', label: 'Button', short: 'Bt', component: ButtonPage },
+  { path: '/carousel', label: 'Carousel', short: 'Ca', component: CarouselPage },
+  { path: '/checkbox', label: 'Checkbox & Radio', short: 'Ch', component: CheckboxPage },
+  { path: '/collapse', label: 'Collapse', short: 'Co', component: CollapsePage },
+  { path: '/combobox', label: 'Combobox', short: 'Cb', component: ComboboxPage },
+  { path: '/input', label: 'Input & Textarea', short: 'In', component: InputPage },
+  { path: '/modal-drawer', label: 'Modal & Drawer', short: 'Md', component: ModalDrawerPage },
+  { path: '/overlay', label: 'Popover, Tooltip & Toast', short: 'Po', component: OverlayPage },
+  { path: '/progress', label: 'Progress', short: 'Pr', component: ProgressPage },
+  { path: '/range', label: 'Range & Slider', short: 'Rg', component: RangePage },
+  { path: '/select', label: 'Select', short: 'Se', component: SelectPage },
+  { path: '/tabs', label: 'Tabs', short: 'Tb', component: TabsPage },
 ];
 
-export const findRoute = (id: string) => demoRoutes.find((r) => r.id === id);
+export const DEFAULT_PATH = demoRoutes[1].path; // /button
