@@ -1,0 +1,71 @@
+/* --- Details / Summary (Accordion & Collapse) --- */
+details.accordion-item,
+details.collapse-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+summary.accordion-summary,
+summary.collapse-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  list-style: none; /* Hide standard marker */
+}
+
+/* Custom indicator icon */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary .accordion-icon::after,
+summary .collapse-icon::after {
+  content: '▼';
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+details[open] summary .accordion-icon::after,
+details[open] summary .collapse-icon::after {
+  transform: rotate(180deg);
+}
+
+.accordion-content,
+.collapse-content {
+  padding: 1rem;
+  border-top: 1px solid #e2e8f0;
+  background-color: #fafafa;
+}
+
+/* --- Tabs Component --- */
+.tabs-list {
+  display: flex;
+  border-bottom: 2px solid #e2e8f0;
+  gap: 0.5rem;
+}
+
+.tab-trigger {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-trigger.active {
+  border-bottom-color: #2563eb;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.tab-panel {
+  padding: 1rem 0;
+}

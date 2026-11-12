@@ -1,0 +1,174 @@
+/* Carousel.css */
+
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  /* overflow: hidden; */
+}
+
+/* ==========================================================================
+   1. SCROLL CONTAINER & SCROLL SNAP
+   ========================================================================== */
+
+.carousel-track {
+  display: flex;
+  overflow-x: auto;
+  /* overflow-y: hidden; */
+  scroll-snap-type: x mandatory; /* Enforces horizontal snapping */
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Hide default scrollbar */
+  overscroll-behavior: contain;
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+
+  /* Autoplay animation across 4 slides */
+  /* animation: css-autoplay 12s infinite ease-in-out; */
+}
+
+/* Chrome/Safari */
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Pause autoplay when user hovers or touches the carousel */
+/* .carousel:hover .carousel-track,
+.carousel-track:focus-within {
+  animation-play-state: paused;
+} */
+
+.carousel-slide {
+  flex: 0 0 100%; /* Each slide takes exactly 100% width */
+  scroll-snap-align: center; /* Snaps slide directly to center */
+  scroll-snap-stop: always; /* Prevents skipping past slides on fast flings */
+  box-sizing: border-box;
+}
+
+/* prevent native image ghost-drag inside the track */
+.carousel img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   2. CONTROLS & PAGINATION
+   ========================================================================== */
+
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+  pointer-events: none; /* Allows clicks to pass through empty overlay area */
+}
+
+.carousel-btn {
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.7);
+  color: #fff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.9);
+  transform: scale(1.08);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.carousel-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.pagination-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background-color: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.pagination-dot.active {
+  background-color: #2563eb;
+  transform: scale(1.25);
+}
+
+/* ==========================================================================
+   3. PROGRESSIVE ENHANCEMENT: NATIVE CSS SCROLL BUTTONS & MARKERS
+   ========================================================================== */
+
+@supports (scroll-marker-group: after) {
+  .carousel-track {
+    scroll-marker-group: after;
+  }
+
+  .carousel-slide::scroll-marker {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #cbd5e1;
+  }
+
+  .carousel-slide::scroll-marker:target-current {
+    background-color: #2563eb;
+  }
+}
+
+/* 
+  Translate 0% -> -25% -> -50% -> -75% 
+  (Each slide is 25% of the total 400% track width)
+*/
+/* @keyframes css-autoplay {
+  0%,
+  20% {
+    transform: translateX(0%);
+  }
+  25%,
+  45% {
+    transform: translateX(-25%);
+  }
+  50%,
+  70% {
+    transform: translateX(-50%);
+  }
+  75%,
+  95% {
+    transform: translateX(-75%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track {
+    animation: none;
+  }
+} */

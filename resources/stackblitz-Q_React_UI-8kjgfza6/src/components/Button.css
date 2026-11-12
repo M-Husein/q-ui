@@ -1,0 +1,257 @@
+/* ==========================================================================
+   BUTTON COMPONENT STYLES (Bootstrap 5.3 inspired)
+   ========================================================================== */
+
+/* 1. Base .btn Styles (Corresponds to 'md' size defaults) */
+.btn {
+  --btn-bg: #0d6efd;
+  --btn-border: #0d6efd;
+  --btn-color: #fff;
+  --btn-hover-bg: #0b5ed7;
+  --btn-hover-border: #0a58ca;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #0a58ca;
+  --btn-active-border: #0a53be;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(49, 132, 253, 0.5);
+
+  display: inline-flex;
+  /* flex-wrap: nowrap;
+  flex: none; */
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--btn-color);
+  text-align: center;
+  text-decoration: none; /* Strips <a> tag underlines */
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  padding: 0.375rem 0.75rem; /* Default MD sizing */
+  font-size: 1rem; /* Default MD sizing */
+  border-radius: 0.375rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  /* Prevent <input> OS chrome overriding border radius */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Hover State */
+.btn:hover:not(:disabled):not(.disabled) {
+  color: var(--btn-hover-color);
+  background-color: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
+}
+
+/* Active / Pressed State */
+.btn:active:not(:disabled):not(.disabled) {
+  color: var(--btn-active-color);
+  background-color: var(--btn-active-bg);
+  border-color: var(--btn-active-border);
+}
+
+/* Keyboard Focus Ring */
+.btn:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem var(--btn-focus-shadow);
+}
+
+/* Disabled State (Covers native :disabled on <button>/<input> and .disabled class on <a>) */
+
+/* 1. Catches native <button disabled> and <button> inside <fieldset disabled> */
+.btn:disabled,
+
+/* 2. Catches manual disabled class on <a> tags (<a class="btn disabled">) */
+.btn.disabled,
+
+/* 3. Catches <a> tags inside <fieldset disabled> */
+fieldset:disabled .btn {
+  pointer-events: none;
+  opacity: 0.65;
+  box-shadow: none;
+
+  /* Prevents dragging ghost images on disabled <a> buttons */
+  -webkit-user-drag: none;
+}
+
+/* ==========================================================================
+   2. SIZES (.btn-sm and .btn-lg)
+   ========================================================================== */
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+}
+
+.btn-lg {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  border-radius: 0.5rem;
+}
+
+/* ==========================================================================
+   3. SOLID KINDS
+   ========================================================================== */
+
+/* Main (Primary) */
+.btn-main {
+  --btn-bg: #0d6efd;
+  --btn-border: #0d6efd;
+  --btn-color: #fff;
+  --btn-hover-bg: #0b5ed7;
+  --btn-hover-border: #0a58ca;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #0a58ca;
+  --btn-active-border: #0a53be;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(49, 132, 253, 0.5);
+}
+
+/* Success */
+.btn-success {
+  --btn-bg: #198754;
+  --btn-border: #198754;
+  --btn-color: #fff;
+  --btn-hover-bg: #157347;
+  --btn-hover-border: #146c43;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #146c43;
+  --btn-active-border: #13653f;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(60, 153, 110, 0.5);
+}
+
+/* Error (Danger) */
+.btn-error {
+  --btn-bg: #dc3545;
+  --btn-border: #dc3545;
+  --btn-color: #fff;
+  --btn-hover-bg: #bb2d3b;
+  --btn-hover-border: #b02a37;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #b02a37;
+  --btn-active-border: #a52834;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(225, 83, 97, 0.5);
+}
+
+/* Warn (Warning) */
+.btn-warn {
+  --btn-bg: #ffc107;
+  --btn-border: #ffc107;
+  --btn-color: #000;
+  --btn-hover-bg: #ffca2c;
+  --btn-hover-border: #ffc720;
+  --btn-hover-color: #000;
+  --btn-active-bg: #ffc720;
+  --btn-active-border: #ffc017;
+  --btn-active-color: #000;
+  --btn-focus-shadow: rgba(217, 164, 6, 0.5);
+}
+
+/* Info */
+.btn-info {
+  --btn-bg: #0dcaf0;
+  --btn-border: #0dcaf0;
+  --btn-color: #000;
+  --btn-hover-bg: #31d2f2;
+  --btn-hover-border: #25cff2;
+  --btn-hover-color: #000;
+  --btn-active-bg: #25cff2;
+  --btn-active-border: #1a9cb0;
+  --btn-active-color: #000;
+  --btn-focus-shadow: rgba(11, 172, 204, 0.5);
+}
+
+/* ==========================================================================
+   4. OUTLINE KINDS
+   ========================================================================== */
+
+/* Outline Main */
+.btn-outline-main {
+  --btn-bg: transparent;
+  --btn-border: #0d6efd;
+  --btn-color: #0d6efd;
+  --btn-hover-bg: #0d6efd;
+  --btn-hover-border: #0d6efd;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #0a58ca;
+  --btn-active-border: #0a53be;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(13, 110, 253, 0.5);
+}
+
+/* Outline Success */
+.btn-outline-success {
+  --btn-bg: transparent;
+  --btn-border: #198754;
+  --btn-color: #198754;
+  --btn-hover-bg: #198754;
+  --btn-hover-border: #198754;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #146c43;
+  --btn-active-border: #13653f;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(25, 135, 84, 0.5);
+}
+
+/* Outline Error */
+.btn-outline-error {
+  --btn-bg: transparent;
+  --btn-border: #dc3545;
+  --btn-color: #dc3545;
+  --btn-hover-bg: #dc3545;
+  --btn-hover-border: #dc3545;
+  --btn-hover-color: #fff;
+  --btn-active-bg: #b02a37;
+  --btn-active-border: #a52834;
+  --btn-active-color: #fff;
+  --btn-focus-shadow: rgba(220, 53, 69, 0.5);
+}
+
+/* Outline Warn */
+.btn-outline-warn {
+  --btn-bg: transparent;
+  --btn-border: #ffc107;
+  --btn-color: #ffc107;
+  --btn-hover-bg: #ffc107;
+  --btn-hover-border: #ffc107;
+  --btn-hover-color: #000;
+  --btn-active-bg: #ffc720;
+  --btn-active-border: #ffc017;
+  --btn-active-color: #000;
+  --btn-focus-shadow: rgba(255, 193, 7, 0.5);
+}
+
+/* Outline Info */
+.btn-outline-info {
+  --btn-bg: transparent;
+  --btn-border: #0dcaf0;
+  --btn-color: #0dcaf0;
+  --btn-hover-bg: #0dcaf0;
+  --btn-hover-border: #0dcaf0;
+  --btn-hover-color: #000;
+  --btn-active-bg: #25cff2;
+  --btn-active-border: #1a9cb0;
+  --btn-active-color: #000;
+  --btn-focus-shadow: rgba(13, 202, 240, 0.5);
+}
+
+/* ==========================================================================
+   DARK MODE OVERRIDES
+   ========================================================================== */
+
+/* @media (prefers-color-scheme: dark) {
+  .btn-warn,
+  .btn-info {
+    --btn-color: #000;
+  }
+} */

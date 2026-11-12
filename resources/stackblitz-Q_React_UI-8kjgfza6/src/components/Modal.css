@@ -1,0 +1,47 @@
+/* General modal resets */
+.modal {
+  border: 0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  visibility: hidden;
+  background-clip: padding-box;
+  color: inherit;
+}
+
+.modal[open] {
+  visibility: visible;
+}
+
+/* Standard backdrop styling (when backdrop is true or 'lock') */
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Polyfill backdrop fallback */
+.modal + .backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  inset: 0;
+}
+
+/* Non-modal mode (when backdrop={false}) */
+.modal.no-backdrop {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+
+/* Completely remove polyfill overlay when backdrop={false} */
+.modal.no-backdrop + .backdrop {
+  display: none !important;
+}
+
+/* .modal .x {
+
+} */

@@ -1,0 +1,147 @@
+/* ==========================================================================
+   NATIVE POPOVER + INLINE SELECT SEARCHABLE COMPONENT
+   ========================================================================== */
+
+.native-search-select {
+  display: inline-block;
+  width: 100%;
+}
+
+/* 1. Trigger Button */
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background-color: #ffffff;
+  user-select: none;
+}
+
+.select-trigger:disabled {
+  cursor: not-allowed;
+  background-color: #e9ecef;
+}
+
+.select-placeholder {
+  color: #6c757d;
+}
+
+.select-arrow {
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 2px solid #6c757d;
+  border-bottom: 2px solid #6c757d;
+  transform: rotate(45deg);
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+/* 2. Top-Layer Popover Box Container */
+.select-box[popover] {
+  position: absolute;
+  inset: auto;
+  top: anchor(bottom);
+  left: anchor(left);
+  width: anchor(width);
+  min-width: 220px;
+  margin: 0.25rem 0 0 0;
+  padding: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+  /* Discrete Top-Layer Transitions */
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.15s ease, transform 0.15s ease,
+    display 0.15s allow-discrete;
+}
+
+.select-box:popover-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@starting-style {
+  .select-box:popover-open {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* Fallback flip positioning if overflowing bottom viewport edge */
+@supports (position-try-fallbacks: flip-block) {
+  .select-box[popover] {
+    position-try-fallbacks: flip-block;
+  }
+}
+
+/* 3. In-Popover Search Input */
+.select-search-wrapper {
+  margin-bottom: 0.5rem;
+}
+
+.select-search-input {
+  width: 100%;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* 4. Expanded Inline Native Select Element */
+.select-native {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  font-size: 0.95rem;
+  box-shadow: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.select-native:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.select-native option {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+
+.select-native option:checked {
+  background-color: #0d6efd linear-gradient(0deg, #0d6efd 0%, #0d6efd 100%);
+  color: #ffffff;
+}
+
+.select-native option.select-no-results {
+  color: #6c757d;
+  text-align: center;
+  cursor: default;
+}
+
+/* Dark Mode Support */
+/* @media (prefers-color-scheme: dark) {
+    .select-trigger,
+    .select-box[popover] {
+      background-color: #212529;
+      border-color: #495057;
+      color: #dee2e6;
+    }
+  
+    .select-native option {
+      color: #dee2e6;
+    }
+  
+    .select-native option:checked {
+      background-color: #0b5ed7;
+      color: #ffffff;
+    }
+  } */
