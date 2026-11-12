@@ -6,8 +6,12 @@ import { AppLayout } from './layout/AppLayout';
 import { DEFAULT_PATH, demoRoutes } from './pages/routes';
 import { NotFound } from './pages/NotFound';
 
-/** Root route: wraps everything in Refine (headless core + react-router bindings). */
-const Application = () => (
+/**
+ * Refine must render inside the router context, so it lives in a layout route
+ * (not the root). DocumentTitleHandler and UnsavedChangesNotifier use
+ * react-router hooks and must also sit below RouterProvider.
+ */
+const RefineLayout = () => (
   <Refine
     authProvider={qAuthProvider}
     routerProvider={routerBindings}
@@ -26,7 +30,7 @@ const Application = () => (
 
 const router = createBrowserRouter([
   {
-    Component: Application,
+    Component: RefineLayout,
     children: [
       {
         Component: AppLayout,
