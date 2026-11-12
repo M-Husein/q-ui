@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import type { DemoRoute } from '../pages/routes';
 
 export interface AppLayoutProps {
@@ -10,22 +10,30 @@ export interface AppLayoutProps {
 const DRAWER_ID = 'q-app-drawer';
 
 /* Responsive collapsible icon-only sidebar (DaisyUI drawer, is-drawer-open/close). */
+const DESKTOP_QUERY = '(min-width: 1024px)';
+const isDesktop = () => typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches;
+
 export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
   const toggleRef = useRef<HTMLInputElement>(null);
+  // Checkbox state drives the drawer: checked = expanded (desktop default),
+  // unchecked = collapsed icon rail. On mobile it means the overlay is open,
+  // so mobile starts closed.
+  const [desktop] = useState(isDesktop);
 
+  // Only auto-close the overlay on mobile. On desktop, navigating must not collapse the rail.
   const closeMobileDrawer = () => {
-    if (toggleRef.current) toggleRef.current.checked = false;
+    if (!isDesktop() && toggleRef.current) toggleRef.current.checked = false;
   };
 
   return (
-    <div className="drawer lg:drawer-open">
-      <input id={DRAWER_ID} ref={toggleRef} type="checkbox" className="drawer-toggle" />
+    <div className="drawer">
+      <input id={DRAWER_ID} ref={toggleRef} type="checkbox" className="drawer-toggle" defaultChecked={desktop} />
 
       <div className="drawer-content flex min-h-screen min-w-0 flex-col">
         <nav className="navbar sticky top-0 z-10 w-full bg-base-300">
           <label
             htmlFor={DRAWER_ID}
-            aria-label="open sidebar"
+            aria-label="toggle sidebar"
             className="btn btn-square btn-ghost drawer-button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="my-1.5 inline-block size-4">
