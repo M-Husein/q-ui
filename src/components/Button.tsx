@@ -12,6 +12,16 @@ export type QButtonKind =
 
 export type QButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
 
+export type QButtonVariant = 'default' | 'outline' | 'dash' | 'soft';
+
+/* Literal class names (Tailwind v4 cannot see dynamic templates). */
+const VARIANT_CLASS: Record<QButtonVariant, string> = {
+  default: '',
+  outline: 'btn-outline',
+  dash: 'btn-dash',
+  soft: 'btn-soft',
+};
+
 /*
  * Tailwind v4 only emits classes that appear as complete string literals in
  * source. Dynamic `btn-${kind}` would be purged, so every DaisyUI color class
@@ -40,7 +50,10 @@ const SIZE_CLASS: Record<string, string> = {
 export interface QBaseButtonProps {
   kind?: QButtonKind;
   size?: QButtonSize;
+  /** Shorthand for variant="outline". */
   outline?: boolean;
+  /** DaisyUI style: outline (default), dash, or soft. */
+  variant?: QButtonVariant;
   base?: string;
   className?: string;
   disabled?: boolean;
@@ -63,6 +76,7 @@ export const Button = (<C extends React.ElementType = 'button'>({
   kind = 'primary',
   size,
   outline,
+  variant,
   className = '',
   disabled,
   onClick,
@@ -74,7 +88,8 @@ export const Button = (<C extends React.ElementType = 'button'>({
   const isNativeButton = Component === 'button' || Component === 'input';
 
   const colorClass = (kind && COLOR_CLASS[kind]) || '';
-  const kindClass = [colorClass, outline ? 'btn-outline' : '', (size && SIZE_CLASS[size]) || '']
+  const styleClass = VARIANT_CLASS[variant ?? (outline ? 'outline' : 'default')] ?? '';
+  const kindClass = [colorClass, styleClass, (size && SIZE_CLASS[size]) || '']
     .filter(Boolean)
     .join(' ');
 
