@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useEffectEvent } from 'react';
 
 export interface CarouselItem {
   id: string;
@@ -24,26 +24,33 @@ export const Carousel: React.FC<CarouselProps> = ({
   const [active, setActive] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [touching, setTouching] = useState(false);
   const [visible, setVisible] = useState(true);
 
+  // Pause autoplay while the tab is hidden.
   useEffect(() => {
     const onVis = () => setVisible(!document.hidden);
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
   }, []);
 
-  useEffect(() => {
-    if (!autoPlay || hovered || focused || !visible) return;
-    const t = setInterval(() => {
-      const scroller = trackRef.current;
-      if (!scroller) return;
-      const { scrollLeft, clientWidth, scrollWidth } = scroller;
-      if (scrollLeft + clientWidth >= scrollWidth - 10) scroller.scrollTo({ left: 0, behavior: 'instant' as ScrollBehavior });
-      else scroller.scrollBy({ left: clientWidth, behavior: 'smooth' });
-    }, autoPlayInterval);
-    return () => clearInterval(t);
-  }, [autoPlay, hovered, focused, visible, autoPlayInterval]);
+  // React 19 useEffectEvent: keep the scroll action out of the effect's deps.
+  const onAutoPlayTick = useEffectEvent(() => {
+    const scroller = trackRef.current;
+    if (!scroller) return;
+    const { scrollLeft, clientWidth, scrollWidth } = scroller;
+    if (scrollLeft + clientWidth >= scrollWidth - 10)
+      scroller.scrollTo({ left: 0, behavior: 'instant' as ScrollBehavior });
+    else scroller.scrollBy({ left: clientWidth, behavior: 'smooth' });
+  });
 
+  useEffect(() => {
+    if (!autoPlay || hovered || focused || touching || !visible) return;
+    const t = setInterval(onAutoPlayTick, autoPlayInterval);
+    return () => clearInterval(t);
+  }, [autoPlay, hovered, focused, touching, visible, autoPlayInterval]);
+
+  // Update the active index only once the scroll-snap animation settles.
   const onScrollEnd = () => {
     const scroller = trackRef.current;
     if (!scroller) return;
@@ -64,13 +71,15 @@ export const Carousel: React.FC<CarouselProps> = ({
   return (
     <section
       aria-label={ariaLabel}
-      className={className}
+      className={`q-carousel ${className ?? ''}`.trim()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
       }}
+      onTouchStart={() => setTouching(true)}
+      onTouchEnd={() => setTouching(false)}
     >
       <div ref={trackRef} onScrollEnd={onScrollEnd} className="q-carousel-track" tabIndex={0}>
         {items.map((item, i) => (

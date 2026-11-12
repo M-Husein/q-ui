@@ -2,6 +2,7 @@ import React, { useId, useRef, useState, useEffect } from 'react';
 
 export interface PopoverProps {
   trigger: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
+  forceRender?: boolean;
   children: React.ReactNode;
   className?: string;
   onToggle?: (isOpen: boolean, e: React.ToggleEvent<HTMLDivElement>) => void;
@@ -9,6 +10,7 @@ export interface PopoverProps {
 
 export const Popover: React.FC<PopoverProps> = ({
   trigger,
+  forceRender,
   children,
   className,
   onToggle,
@@ -17,15 +19,22 @@ export const Popover: React.FC<PopoverProps> = ({
   const anchor = `--q-anchor-${id}`;
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  // The popover div is not mounted by default; it is rendered on the first
+  // trigger click (handleTriggerClick), unless forceRender is set.
+  const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
-  // The popover element must exist before the first click: the trigger's
-  // popovertarget can only open an element that is already in the DOM.
-  // (Previously it was mounted only after a toggle event, which never fired,
-  // so the first click did nothing.)
   const handleToggle = (e: React.ToggleEvent<HTMLDivElement>) => {
     const open = e.newState === 'open';
     setIsOpen(open);
+    if (open && !hasBeenOpened) setHasBeenOpened(true);
     onToggle?.(open, e);
+  };
+
+  // The popover element isn't in the DOM until the trigger is first clicked, so
+  // mount it here before the native popovertarget can open it.
+  const handleTriggerClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!hasBeenOpened && !forceRender) setHasBeenOpened(true);
+    trigger.props.onClick?.(e);
   };
 
   // Fallback for browsers without the Popover API: toggle a data attribute and
@@ -49,22 +58,25 @@ export const Popover: React.FC<PopoverProps> = ({
     popoverTargetAction: 'toggle',
     'aria-expanded': isOpen,
     'aria-controls': id,
+    onClick: handleTriggerClick,
     style: { ...(trigger.props.style || {}), anchorName: anchor },
   } as any);
 
   return (
     <>
       {triggerEl}
-      <div
-        id={id}
-        ref={ref}
-        popover="auto"
-        className={`q-popover ${className ?? ''}`.trim()}
-        style={{ positionAnchor: anchor } as React.CSSProperties}
-        onToggle={handleToggle}
-      >
-        {children}
-      </div>
+      {(!!forceRender || hasBeenOpened) && (
+        <div
+          id={id}
+          ref={ref}
+          popover="auto"
+          className={`q-popover ${className ?? ''}`.trim()}
+          style={{ positionAnchor: anchor } as React.CSSProperties}
+          onToggle={handleToggle}
+        >
+          {children}
+        </div>
+      )}
     </>
   );
 };
