@@ -10,7 +10,32 @@ export type QButtonKind =
   | 'link'
   | (string & {});
 
-export type QButtonSize = 'sm' | 'md' | 'lg' | undefined;
+export type QButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
+
+/*
+ * Tailwind v4 only emits classes that appear as complete string literals in
+ * source. Dynamic `btn-${kind}` would be purged, so every DaisyUI color class
+ * is spelled out here.
+ */
+const COLOR_CLASS: Record<string, string> = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  accent: 'btn-accent',
+  neutral: 'btn-neutral',
+  info: 'btn-info',
+  success: 'btn-success',
+  warning: 'btn-warning',
+  error: 'btn-error',
+  ghost: 'btn-ghost',
+  link: 'btn-link',
+};
+const SIZE_CLASS: Record<string, string> = {
+  xs: 'btn-xs',
+  sm: 'btn-sm',
+  md: '',
+  lg: 'btn-lg',
+  xl: 'btn-xl',
+};
 
 export interface QBaseButtonProps {
   kind?: QButtonKind;
@@ -48,8 +73,8 @@ export const Button = (<C extends React.ElementType = 'button'>({
   const Component = as || 'button';
   const isNativeButton = Component === 'button' || Component === 'input';
 
-  const colorClass = kind ? `btn-${kind}` : '';
-  const kindClass = [colorClass, outline ? 'btn-outline' : '', size ? `btn-${size}` : '']
+  const colorClass = (kind && COLOR_CLASS[kind]) || '';
+  const kindClass = [colorClass, outline ? 'btn-outline' : '', (size && SIZE_CLASS[size]) || '']
     .filter(Boolean)
     .join(' ');
 

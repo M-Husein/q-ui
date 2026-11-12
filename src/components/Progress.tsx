@@ -7,6 +7,15 @@ export type ProgressVariant =
   | 'warn'
   | 'info';
 
+// Full literal class names so Tailwind v4 emits them (no dynamic templates).
+const PROGRESS_VARIANT_CLASS: Record<ProgressVariant, string> = {
+  primary: '',
+  success: 'progress-success',
+  error: 'progress-error',
+  warn: 'progress-warning',
+  info: 'progress-info',
+};
+
 export interface ProgressProps extends React.ComponentPropsWithoutRef<'div'> {
   value?: number;
   min?: number;
@@ -38,8 +47,7 @@ export const Progress: React.FC<ProgressProps> = ({
 }) => {
   const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
 
-  const variantClass =
-    variant === 'primary' ? '' : `progress-${variant === 'error' ? 'error' : variant}`;
+  const variantClass = PROGRESS_VARIANT_CLASS[variant] ?? '';
 
   const classes = [
     'progress',
