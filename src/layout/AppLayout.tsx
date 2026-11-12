@@ -8,26 +8,36 @@ export interface AppLayoutProps {
 }
 
 const DRAWER_ID = 'q-app-drawer';
-
-/* Responsive collapsible icon-only sidebar (DaisyUI drawer, is-drawer-open/close). */
 const DESKTOP_QUERY = '(min-width: 1024px)';
-const isDesktop = () => typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches;
 
+/*
+ * DaisyUI "responsive collapsible icon-only drawer sidebar" pattern:
+ * - lg and up: `lg:drawer-open` keeps the sidebar visible. The checkbox still
+ *   controls the expanded (checked) / icon-rail (unchecked) state.
+ * - below lg: the sidebar is an overlay drawer, closed by default.
+ * The checkbox is `inline` so it is not hidden by `drawer-open`.
+ */
 export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
   const toggleRef = useRef<HTMLInputElement>(null);
-  // Checkbox state drives the drawer: checked = expanded (desktop default),
-  // unchecked = collapsed icon rail. On mobile it means the overlay is open,
-  // so mobile starts closed.
-  const [desktop] = useState(isDesktop);
+  // Desktop starts expanded, tablet/mobile starts with the overlay closed.
+  const [startExpanded] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
 
-  // Only auto-close the overlay on mobile. On desktop, navigating must not collapse the rail.
-  const closeMobileDrawer = () => {
-    if (!isDesktop() && toggleRef.current) toggleRef.current.checked = false;
+  // Only close the overlay on small screens. On desktop, picking a menu item keeps the sidebar as it is.
+  const closeOverlayOnSmall = () => {
+    if (!window.matchMedia(DESKTOP_QUERY).matches && toggleRef.current) {
+      toggleRef.current.checked = false;
+    }
   };
 
   return (
-    <div className="drawer">
-      <input id={DRAWER_ID} ref={toggleRef} type="checkbox" className="drawer-toggle" defaultChecked={desktop} />
+    <div className="drawer lg:drawer-open">
+      <input
+        id={DRAWER_ID}
+        ref={toggleRef}
+        type="checkbox"
+        className="drawer-toggle inline"
+        defaultChecked={startExpanded}
+      />
 
       <div className="drawer-content flex min-h-screen min-w-0 flex-col">
         <nav className="navbar sticky top-0 z-10 w-full bg-base-300">
@@ -60,7 +70,7 @@ export const AppLayout = ({ routes, activeId, children }: AppLayoutProps) => {
                   className={`is-drawer-close:tooltip is-drawer-close:tooltip-right ${activeId === r.id ? 'menu-active' : ''}`}
                   data-tip={r.label}
                   aria-current={activeId === r.id ? 'page' : undefined}
-                  onClick={closeMobileDrawer}
+                  onClick={closeOverlayOnSmall}
                 >
                   <span className="inline-flex size-4 items-center justify-center text-xs font-bold">{r.short}</span>
                   <span className="is-drawer-close:hidden">{r.label}</span>
