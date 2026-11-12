@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router';
 import { demoRoutes } from '../pages/routes';
 
 const DRAWER_ID = 'q-app-drawer';

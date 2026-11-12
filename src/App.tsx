@@ -1,6 +1,6 @@
 import { Refine } from '@refinedev/core';
-import routerBindings, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router-v6';
-import { Navigate, Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import routerBindings, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
+import { Navigate, Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 import { qAuthProvider } from './lib/authProvider';
 import { AppLayout } from './layout/AppLayout';
 import { DEFAULT_PATH, demoRoutes } from './pages/routes';

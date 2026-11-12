@@ -12,23 +12,23 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
-    "@refinedev/core": "^4.57.10",
-    "@refinedev/react-router-v6": "4.6.2",
+    "@refinedev/core": "^5.0.12",
+    "@refinedev/react-router": "^2.0.4",
     "@tanstack/react-virtual": "^3.13.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "6.23.1"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^8.5.1"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.0",
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "daisyui": "^5.0.0",
-    "oxlint": "^0.15.0",
-    "tailwindcss": "^4.1.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.0.0"
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "daisyui": "^5.8.0",
+    "oxlint": "^1.93.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
   }
 }

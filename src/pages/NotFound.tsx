@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { DEFAULT_PATH } from './routes';
 import { PageHeader } from '../layout/demo';
 
