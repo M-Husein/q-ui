@@ -24,7 +24,7 @@ fallbacks are minimal.
 
 | Component        | Class(es) used                 | Source            |
 |------------------|-------------------------------|-------------------|
-| Button           | `btn btn-<color> btn-outline btn-sm/lg` | DaisyUI     |
+| Button           | `btn btn-<color> btn-outline btn-sm/lg` (color = DaisyUI name: primary/success/error/warning/info/ghost/link) | DaisyUI     |
 | Input            | `input`                       | DaisyUI           |
 | Textarea         | `textarea` (+ `field-sizing` autosize; `q-textarea-autosize-wrapper` fallback) | DaisyUI + Browser API |
 | Checkbox         | `checkbox` (+ `:indeterminate` fallback) | DaisyUI + Browser API |

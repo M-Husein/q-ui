@@ -19,83 +19,84 @@ export interface SelectProps
   className?: string;
 }
 
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  (
-    {
-      options,
-      placeholder,
-      canClear = false,
-      children,
-      onChange,
-      value,
-      defaultValue,
-      disabled = false,
-      className = '',
-      ...restProps
-    },
-    ref
-  ) => {
-    const innerRef = useRef<HTMLSelectElement>(null);
-    const selectRef = (ref as React.RefObject<HTMLSelectElement>) || innerRef;
-    const genId = useId();
-    const id = (restProps as any).id || genId;
+export const Select = ({
+  options,
+  placeholder,
+  canClear = false,
+  children,
+  onChange,
+  value,
+  defaultValue,
+  disabled = false,
+  className = '',
+  ref,
+  ...restProps
+}: SelectProps & { ref?: React.Ref<HTMLSelectElement> }) => {
+  const innerRef = useRef<HTMLSelectElement>(null);
+  const setRefs = (node: HTMLSelectElement | null) => {
+    innerRef.current = node;
+    if (typeof ref === 'function') (ref as (n: HTMLSelectElement | null) => void)(node);
+    else if (ref) (ref as React.MutableRefObject<HTMLSelectElement | null>).current = node;
+  };
+  const selectRef = innerRef;
+  const genId = useId();
+  const id = (restProps as any).id || genId;
 
-    const current = value ?? selectRef.current?.value ?? defaultValue ?? '';
-    const showClear = canClear && !disabled && !!current;
+  const current = value ?? selectRef.current?.value ?? defaultValue ?? '';
+  const showClear = canClear && !disabled && !!current;
 
-    const handleClear = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const el = selectRef.current;
-      if (!el) return;
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )?.set;
-      setter?.call(el, '');
-      el.dispatchEvent(new Event('change', { bubbles: true }));
-    };
+  const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const el = selectRef.current;
+    if (!el) return;
+    const setter = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      'value'
+    )?.set;
+    setter?.call(el, '');
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  };
 
-    return (
-      <div
-        className={`q-select-wrap ${showClear ? 'q-has-clear' : ''} ${className}`.trim()}
+  return (
+    <div
+      className={`q-select-wrap ${showClear ? 'q-has-clear' : ''} ${className}`.trim()}
+    >
+      <select
+        ref={setRefs}
+        id={id}
+        value={value}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        onChange={(e) => onChange?.(e.target.value, e)}
+        className="select"
+        {...restProps}
       >
-        <select
-          ref={selectRef}
-          id={id}
-          value={value}
-          defaultValue={defaultValue}
-          disabled={disabled}
-          onChange={(e) => onChange?.(e.target.value, e)}
-          className="select"
-          {...restProps}
-        >
-          {placeholder && (
-            <option value="" disabled hidden>
-              {placeholder}
-            </option>
-          )}
-          {options
-            ? options.map((o) => (
-                <option key={o.value} value={o.value} disabled={o.disabled}>
-                  {o.label}
-                </option>
-              ))
-            : children}
-        </select>
-        {showClear && (
-          <button
-            type="button"
-            className="q-select-clear"
-            aria-label="Clear"
-            tabIndex={-1}
-            onClick={handleClear}
-          >
-            ✕
-          </button>
+        {placeholder && (
+          <option value="" disabled hidden>
+            {placeholder}
+          </option>
         )}
-        <span className="q-select-arrow" aria-hidden="true" />
-      </div>
-    );
-  }
-);
+        {options
+          ? options.map((o) => (
+              <option key={o.value} value={o.value} disabled={o.disabled}>
+                {o.label}
+              </option>
+            ))
+          : children}
+      </select>
+      {showClear && (
+        <button
+          type="button"
+          className="q-select-clear"
+          aria-label="Clear"
+          tabIndex={-1}
+          onClick={handleClear}
+        >
+          ✕
+        </button>
+      )}
+      <span className="q-select-arrow" aria-hidden="true" />
+    </div>
+  );
+};

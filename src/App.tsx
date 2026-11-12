@@ -89,10 +89,10 @@ export const App = () => {
       <section className="q-section">
         <h2>Button</h2>
         <div className="q-row">
-          <Button kind="main">Main</Button>
+          <Button kind="primary">Primary</Button>
           <Button kind="success">Success</Button>
           <Button kind="error">Error</Button>
-          <Button kind="warn">Warn</Button>
+          <Button kind="warning">Warning</Button>
           <Button kind="info">Info</Button>
         </div>
         <div className="q-row" style={{ marginTop: '0.75rem' }}>
@@ -101,7 +101,7 @@ export const App = () => {
           <Button size="lg">Large</Button>
         </div>
         <div className="q-row" style={{ marginTop: '0.75rem' }}>
-          <Button outline kind="main">Outline Main</Button>
+          <Button outline kind="primary">Outline Primary</Button>
           <Button outline kind="success">Outline Success</Button>
           <Button outline kind="error">Outline Error</Button>
         </div>

@@ -2,7 +2,6 @@ import React, {
   useRef,
   useState,
   useEffect,
-  useImperativeHandle,
   useMemo,
   useCallback,
 } from 'react';
@@ -60,42 +59,45 @@ const isGroup = (i: ComboboxItem): i is ComboboxGroup =>
 const normalize = (v?: string | string[]): string[] =>
   Array.isArray(v) ? v : v ? [v] : [];
 
-export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
-  (
-    {
-      options,
-      value,
-      defaultValue,
-      name,
-      placeholder,
-      searchPlaceholder = 'Search',
-      emptyText = 'Not found',
-      filterKeys = ['label'],
-      virtual,
-      itemHeight = 32,
-      autoFocusSearch = true,
-      multiple,
-      max,
-      canClear,
-      canSearch = true,
-      disabled,
-      className,
-      renderOption,
-      renderLabel,
-      renderTag,
-      renderPopup,
-      onChange,
-    },
-    ref
-  ) => {
-    const hiddenRef = useRef<HTMLInputElement>(null);
-    const triggerRef = useRef<HTMLButtonElement>(null);
-    const searchRef = useRef<HTMLInputElement>(null);
-    const listRef = useRef<HTMLDivElement>(null);
-    useImperativeHandle(ref, () => ({
-      ...hiddenRef.current!,
+export const Combobox = ({
+  options,
+  value,
+  defaultValue,
+  name,
+  placeholder,
+  searchPlaceholder = 'Search',
+  emptyText = 'Not found',
+  filterKeys = ['label'],
+  virtual,
+  itemHeight = 32,
+  autoFocusSearch = true,
+  multiple,
+  max,
+  canClear,
+  canSearch = true,
+  disabled,
+  className,
+  renderOption,
+  renderLabel,
+  renderTag,
+  renderPopup,
+  onChange,
+  ref,
+}: ComboboxProps & { ref?: React.Ref<HTMLInputElement> }) => {
+  const hiddenRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  // React 19: ref is a normal prop; expose the combobox as an input-like handle.
+  useEffect(() => {
+    if (!ref) return;
+    const obj = ref as React.MutableRefObject<HTMLInputElement | null>;
+    obj.current = hiddenRef.current;
+    (obj.current as any) = {
+      ...(hiddenRef.current as any),
       focus: () => triggerRef.current?.focus(),
-    }));
+    };
+  });
 
     const allOptions = useMemo(() => {
       const flat: ComboboxOption[] = [];
@@ -372,5 +374,5 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
         <input ref={hiddenRef} type="hidden" name={name} value={value} disabled={disabled} />
       </div>
     );
-  }
-);
+  };
+
