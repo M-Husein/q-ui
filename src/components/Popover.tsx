@@ -2,7 +2,6 @@ import React, { useId, useRef, useState, useEffect } from 'react';
 
 export interface PopoverProps {
   trigger: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
-  forceRender?: boolean;
   children: React.ReactNode;
   className?: string;
   onToggle?: (isOpen: boolean, e: React.ToggleEvent<HTMLDivElement>) => void;
@@ -10,7 +9,6 @@ export interface PopoverProps {
 
 export const Popover: React.FC<PopoverProps> = ({
   trigger,
-  forceRender,
   children,
   className,
   onToggle,
@@ -19,12 +17,14 @@ export const Popover: React.FC<PopoverProps> = ({
   const anchor = `--q-anchor-${id}`;
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
+  // The popover element must exist before the first click: the trigger's
+  // popovertarget can only open an element that is already in the DOM.
+  // (Previously it was mounted only after a toggle event, which never fired,
+  // so the first click did nothing.)
   const handleToggle = (e: React.ToggleEvent<HTMLDivElement>) => {
     const open = e.newState === 'open';
     setIsOpen(open);
-    if (open && !mounted) setMounted(true);
     onToggle?.(open, e);
   };
 
@@ -55,18 +55,16 @@ export const Popover: React.FC<PopoverProps> = ({
   return (
     <>
       {triggerEl}
-      {(forceRender || mounted) && (
-        <div
-          id={id}
-          ref={ref}
-          popover="auto"
-          className={`q-popover ${className ?? ''}`.trim()}
-          style={{ positionAnchor: anchor } as React.CSSProperties}
-          onToggle={handleToggle}
-        >
-          {children}
-        </div>
-      )}
+      <div
+        id={id}
+        ref={ref}
+        popover="auto"
+        className={`q-popover ${className ?? ''}`.trim()}
+        style={{ positionAnchor: anchor } as React.CSSProperties}
+        onToggle={handleToggle}
+      >
+        {children}
+      </div>
     </>
   );
 };
