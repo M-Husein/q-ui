@@ -22,9 +22,6 @@ export type { ProgressProps, ProgressVariant } from './components/Progress';
 export { Range } from './components/Range';
 export type { RangeProps } from './components/Range';
 
-export { RangeSlider } from './components/RangeSlider';
-export type { RangeSliderProps, RangeSliderValue } from './components/RangeSlider';
-
 export { Modal } from './components/Modal';
 export type { ModalProps } from './components/Modal';
 
@@ -41,7 +38,6 @@ export { Toast } from './components/Toast';
 export type { ToastProps, ToastPosition } from './components/Toast';
 
 export { Select, type SelectOption, type SelectProps } from './components/Select';
-export { SelectNative, type NativeSelectOption, type SelectNativeProps } from './components/SelectNative';
 
 export { Combobox } from './components/Combobox';
 export type {

@@ -1,17 +1,11 @@
 import { useState } from 'react';
-import { Select, SelectNative } from '../index';
+import { Select } from '../index';
 import { PageHeader, Section } from '../layout/demo';
 
 const countryOptions = [
   { value: 'us', label: '🇺🇸 United States' },
   { value: 'jp', label: '🇯🇵 Japan' },
   { value: 'de', label: '🇩🇪 Germany' },
-];
-const frameworkOptions = [
-  { value: 'react', label: 'React' },
-  { value: 'vue', label: 'Vue' },
-  { value: 'svelte', label: 'Svelte' },
-  { value: 'angular', label: 'Angular' },
 ];
 
 export const SelectPage = () => {
@@ -28,11 +22,6 @@ export const SelectPage = () => {
             <option value="svelte">Svelte 5</option>
           </Select>
           <Select placeholder="Disabled" disabled options={countryOptions} />
-        </div>
-      </Section>
-      <Section title="SelectNative (searchable)">
-        <div style={{ maxWidth: '24rem' }}>
-          <SelectNative placeholder="Choose framework" options={frameworkOptions} />
         </div>
       </Section>
     </>

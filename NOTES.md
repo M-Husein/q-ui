@@ -30,7 +30,6 @@ fallbacks are minimal.
 | Checkbox         | `checkbox` (+ `:indeterminate` fallback) | DaisyUI + Browser API |
 | Radio            | `radio`                       | DaisyUI           |
 | Select           | `select` (+ `q-select-wrap`/`q-select-clear`) | DaisyUI + custom |
-| SelectNative     | `input`/`select` + `q-combobox-*` trigger/popover | DaisyUI + custom |
 | Range            | `range` + `q-range-container`/`q-range-tip` tooltip | DaisyUI + custom |
 | Progress         | `progress` + `progress-<color>` (+ `q-striped`/`q-animated`) | DaisyUI + custom |
 | Tabs             | `tabs tabs-bordered`/`tab`/`tab-content` | DaisyUI     |
@@ -43,7 +42,6 @@ fallbacks are minimal.
 | Tooltip          | native Popover API (`popover=hint`); `q-tooltip` | Browser API + custom |
 | Toast            | native Popover API (`popover=manual`); `q-toast` | Browser API + custom |
 | Combobox         | `q-combobox-*` (DaisyUI has none) | custom          |
-| RangeSlider      | `q-slider`/`q-slider-*`, dual `<input type=range>` (DaisyUI has none) | custom |
 
 ### Browser APIs in use
 - `<dialog>` top layer: Modal, Drawer

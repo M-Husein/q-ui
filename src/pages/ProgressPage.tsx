@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Progress, Range, RangeSlider } from '../index';
+import { Button, Progress, Range } from '../index';
 import { PageHeader, Section } from '../layout/demo';
 
 export const ProgressPage = () => {
@@ -22,21 +22,13 @@ export const ProgressPage = () => {
 };
 
 export const RangePage = () => {
-  const [single, setSingle] = useState<number>(70);
-  const [dual, setDual] = useState<[number, number]>([10, 70]);
   return (
     <>
-      <PageHeader title="Range & Slider" description="DaisyUI range plus a custom dual-thumb slider (DaisyUI has none)." />
+      <PageHeader title="Range" description="DaisyUI range with optional value tooltip." />
       <Section title="Range">
         <div className="q-grid" style={{ maxWidth: '30rem', gap: '1.5rem' }}>
           <Range defaultValue={40} />
           <Range showTooltip={false} defaultValue={60} />
-        </div>
-      </Section>
-      <Section title="Slider">
-        <div className="q-grid" style={{ maxWidth: '30rem', gap: '1.5rem' }}>
-          <RangeSlider value={single} onChange={(v) => setSingle(v as number)} />
-          <RangeSlider value={dual} onChange={(v) => setDual(v as [number, number])} />
         </div>
       </Section>
     </>
