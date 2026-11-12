@@ -20,6 +20,7 @@
 }
 
 /* Base neutral scale (consumed by custom Q components; overridable per theme) */
+:root,
 .q {
   --q-primary: var(--color-primary, #0d6efd);
   --q-success: var(--color-success, #198754);
